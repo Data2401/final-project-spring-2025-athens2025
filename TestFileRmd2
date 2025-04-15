@@ -1,0 +1,45 @@
+---
+title: "TestFileRmd2"
+Group Name: Athens 2025
+Members: Precious Merenu 
+         Claudia Dominguez
+         Justin Perez
+
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("tidyverse")
+library(tidyverse)
+#install.packages("readxl")
+library(readxl)
+```
+
+```{r}
+child_sum_health_dataset <- 'DQS_NHIS_Children_Summary_Statistics_20250410.csv'
+excel_sheets(child_sum_health_dataset)
+
+monthly_encounters <- read_excel(encounters, sheet = 'Monthly Count')
+
+monthly_encounter_df <- monthly_encounters %>% mutate(Fiscal_Year='Fiscal Year') %>%
+  group_by(Month) %>%
+  summarize(Month_Mean = mean(Quantity))
+
+print(monthly_encounter_df)
+
+monthly_encounter_df %>% 
+  ggplot(aes(x=Month, y=Month_Mean)) + 
+  geom_point() +
+  labs(title = "Key Homeland Security Metric - Office of Field Operations",
+       x = "Month",
+       y = "Monthly Average") +
+  theme_minimal()
+
+monthly_encounter_df %>%
+  ggplot(aes(x = Month, y=Month_Mean, fill=Month_Mean)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Key Homeland Security Metric - Office of Field Operations ",
+       x = "Month",
+       y = "Monthly Average",) +
+  theme_minimal()
