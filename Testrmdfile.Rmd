@@ -41,4 +41,17 @@ monthly_encounter_df %>%
 
 
 ```
+```{r}
 
+
+health_data <- read_csv('DQS_NHIS_Children_Summary_Statistics_20250410.csv')
+health_data %>% select(CLASSIFICATION)
+print(health_data)
+
+
+
+
+
+
+
+```
