@@ -17,8 +17,20 @@ library(readxl)
 ```
 
 ```{r}
-child_sum_health_dataset <- 'DQS_NHIS_Children_Summary_Statistics_20250410.csv'
+#Save the dataset into a variable. 
+child_sum_health_dataset <- 'DQS_NHIS_Children_Summary_Statistics_20250410.csv' 
+
+#List all sheets in an excel spreadsheet. 
 excel_sheets(child_sum_health_dataset)
+
+read_child_sum_health <- read_excel(child_sum_health_dataset)
+
+#Trying to create a plot of the data. 
+
+p <- ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) 
+p <- p +  geom_point() + scale_x_log10() 
+p
+
 
 monthly_encounters <- read_excel(encounters, sheet = 'Monthly Count')
 
