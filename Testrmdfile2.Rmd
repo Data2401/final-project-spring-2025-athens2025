@@ -22,12 +22,18 @@ library(readxl)
 #Save the dataset into a variable. 
 child_sum_health_dataset <- 'DQS_NHIS_Children_Summary_Statistics_20250410.csv' 
 
-#List all sheets in an excel spreadsheet. 
-excel_sheets(child_sum_health_dataset)
-
-read_child_sum_health <- read_excel(child_sum_health_dataset)
+read_child_sum_health <- read_csv(child_sum_health_dataset)
 
 read_child_sum_health
+```
+
+```{r}
+#Installing ggplot to visualize the data. 
+install.packages("ggplot2", dependencies = T) 
+
+ggplot(data = read_child_sum_health, mapping = aes(x = Topic, y = y_variable, color = Classification)) +
+   geom_point(size = 5)
+
 ```
 #Trying to create a plot of the data. 
 
