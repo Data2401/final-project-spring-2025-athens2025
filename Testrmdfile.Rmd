@@ -1,5 +1,9 @@
 ---
 title: "Testrmdfile"
+Group Name: Athens 2025
+Members: Precious Merenu 
+         Claudia Dominguez
+         Justin Perez
 output: html_document
 ---
 
