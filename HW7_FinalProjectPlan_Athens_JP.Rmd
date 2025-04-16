@@ -1,7 +1,7 @@
 ---
 title: "Team Athens"
 author: "Claudia, Precious, Justin"
-date: "2025-04-16"
+date: "2025-04-15"
 output: html_document
 ---
 
@@ -63,14 +63,7 @@ Current political foucs on immigration inspired us to find out about more about 
 
 ## Data Visualizations
 
-We plan to use, scatterplots, boxplots, bar graphs and spaghetti plots
+We plan to use scatterplots, boxplots, bar graphs and spaghetti plots.
 
 
-```{r}
-
-# What's in it, what's interesting about it, where it comes from
-# an introduction paragraph to the data
-# a few questions that you plan to ask about the data/graphs you plan to make.
-
-```
 
