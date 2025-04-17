@@ -41,4 +41,4 @@ Questions that Chat helped with.
 3.	How does family status (e.g., single adult vs family unit) impact enforcement outcomes?
 4.	Are there regional patterns in encounter trends — and which field offices process the highest volumes?
 
-Questions that came up as we deepened our understanding of the dataset: 
+Questions that came up as we deepened our understanding of the dataset: adding to see how it affects my commit and push process. 
