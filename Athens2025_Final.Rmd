@@ -1,0 +1,51 @@
+---
+title: "Athens2025_Final"
+output: html_document
+---
+
+```{r}
+library(readxl)
+library(dplyr)
+library(ggplot2)
+
+# Load annual region data
+data <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
+glimpse(data)
+
+colnames(data)
+
+# Clean and filter for 2004–2014
+spaghetti_data <- data %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  ) %>%
+  filter(Year >= 2004 & Year <= 2014)
+
+
+top_regions <- spaghetti_data %>%
+  group_by(Region) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n = 5)
+
+spaghetti_filtered <- spaghetti_data %>%
+  filter(Region %in% top_regions$Region)
+
+
+print(spaghetti_filtered)
+ggplot(spaghetti_data, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2004–2014)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
