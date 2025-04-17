@@ -1,9 +1,5 @@
 ---
 title: "Testrmdfile"
-Group Name: Athens 2025
-Members: Precious Merenu 
-         Claudia Dominguez
-         Justin Perez
 output: html_document
 ---
 
@@ -15,7 +11,8 @@ library(tidyverse)
 library(readxl)
 ```
 
-```{r}
+
+```{r fig.height=4, fig.width=10}
 encounters <- 'KHSM Encounters (OFO) fy25m11.xlsx'
 excel_sheets(encounters)
 
@@ -37,6 +34,7 @@ monthly_encounter_df %>%
 
 monthly_encounter_df %>%
   ggplot(aes(x = Month, y=Month_Mean, fill=Month_Mean)) +
+  ggplot(aes(x=Month, y=Month_Mean, fill=Month_Mean)) +
   geom_bar(stat = "identity") +
   labs(title = "Key Homeland Security Metric - Office of Field Operations ",
        x = "Month",
@@ -46,17 +44,13 @@ monthly_encounter_df %>%
 
 ```
 
-
 ```{r}
 
+encounters <- 'KHSM Encounters (OFO) fy25m11.xlsx'
+#excel_sheets(encounters)
+family_encounters <- read_excel(encounters, sheet = 'Annual Family Status')
 
-health_data <- read_csv('DQS_NHIS_Children_Summary_Statistics_20250410.csv')
-health_data %>% select(CLASSIFICATION)
-print(health_data)
-
-
-
-
+head(family_encounters)
 
 
 

@@ -1,0 +1,69 @@
+---
+title: "Team Athens"
+author: "Claudia, Precious, Justin"
+date: "2025-04-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Project Data and Data Origin
+U.S. Customs and Border Protection (CBP) prevents people from entering the country illegally or bringing anything harmful or illegal into the United States, while facilitating lawful international travel and trade.
+
+The data is CBP Encounters data.
+
+
+## Project Data Description
+The CBP Encounters Key Homeland Security Metric (KHSM) includes any encounter of a removable alien. This includes three sets of data:
+
+People who unlawfully crossed the border between ports of entry.
+People who entered at a port of entry but are inadmissible.
+People expelled under the Title 42 public health order between March 2020 and May 2023 due to COVID-19.
+
+
+## Project Data Details
+
+* Annual Count         
+* Annual Citizenship
+* Annual Region      
+* Annual Family Status
+* Annual Enforce-Admin
+* Annual Field Office
+* Annual Rgn EnfAdm Citp
+* Annual Rgn EnfAdm Fam Status
+* Annual Rgn EnfAdm FldOff
+* Monthly Count
+* Monthly Citizenship
+* Monthly Region
+* Monthly Family Status
+* Monthly Enforce-Admin
+* Monthly Field Office
+* Monthly Rgn EnfAdm Citp
+* Monthly Rgn EnfAdm Fam Statu
+* Monthly Rgn EnfAdm FldOff
+
+## Data Interest
+
+Current political foucs on immigration inspired us to find out about more about US Executive Branch claims about encounters at the US border zones.
+
+## Data Questions
+
+* How many encounters happened in a given region per month or year?
+
+* Which citizenship groups are most frequently encountered?
+
+* What percentage were family units vs individuals?
+
+* How do encounters vary by field office?
+
+* What enforcement or administrative actions were taken and how did they vary by group?
+
+## Data Visualizations
+
+We plan to use scatterplots, boxplots, bar graphs and spaghetti plots.
+
+
+
