@@ -33,13 +33,15 @@ monthly_encounter_df %>%
   theme_minimal()
 
 monthly_encounter_df %>%
-  ggplot(aes(x = Month, y=Month_Mean, fill=Month_Mean)) +
-  ggplot(aes(x=Month, y=Month_Mean, fill=Month_Mean)) +
+  ggplot(aes(x = Month, y = Month_Mean, fill = Month_Mean)) +
   geom_bar(stat = "identity") +
-  labs(title = "Key Homeland Security Metric - Office of Field Operations ",
-       x = "Month",
-       y = "Monthly Average",) +
+  labs(
+    title = "Key Homeland Security Metric - Office of Field Operations",
+    x = "Month",
+    y = "Monthly Average"
+  ) +
   theme_minimal()
+
 
 
 ```
@@ -55,3 +57,23 @@ head(family_encounters)
 
 
 ```
+
+```{r}
+# Time lapse :D
+ggplot(monthly_encounter_df, aes(x = Month, y = Month_Mean, group = 1)) +
+  geom_line(color = "orange", size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Monthly Encounter Trend",
+    x = "Month",
+    y = "Average Encounters"
+  ) +
+  theme_minimal()
+geom_text(aes(label = round(Month_Mean, 1)), vjust = -0.5, size = 3)
+
+geom_smooth(method = "lm", se = FALSE, color = "purple", linetype = "dashed")
+
+```
+
+
+
