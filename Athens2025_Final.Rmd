@@ -12,7 +12,6 @@ library(ggplot2)
 ```
 
 
-
 ```{r}
 
 # Load annual region data
@@ -22,7 +21,7 @@ glimpse(annual_region_encounters)
 colnames(annual_region_encounters)
 
 # Clean and filter for 2004–2014
-spaghetti_annual_region_encounters <- annual_region_encounters %>%
+spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
   rename(
     Year = `Fiscal\r\nYear`,
     Region = `Region`, 
@@ -31,18 +30,18 @@ spaghetti_annual_region_encounters <- annual_region_encounters %>%
   filter(Year >= 2004 & Year <= 2014)
 
 
-top_regions <- spaghetti_annual_region_encounters %>%
+top_regions <- spaghetti_annual_region_encounters_pre %>%
   group_by(Region) %>%
   summarise(Total = sum(Encounters)) %>%
   arrange(desc(Total)) %>%
   slice_head(n = 5)
 
-spaghetti_annual_region_encounters_filtered <- spaghetti_annual_region_encounters %>%
+spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
   filter(Region %in% top_regions$Region)
 
 
-print(spaghetti_annual_region_encounters_filtered)
-ggplot(spaghetti_annual_region_encounters, aes(x = Year, y = Encounters, color = Region)) +
+print(spaghetti_annual_region_encounters_filtered_pre)
+ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, color = Region)) +
   geom_line(size = 1) +
   geom_point(size = 2) +
   labs(
@@ -73,7 +72,7 @@ glimpse(annual_region_encounters)
 colnames(annual_region_encounters)
 
 # Clean and filter for 2004–2014
-spaghetti_annual_region_encounters <- annual_region_encounters %>%
+spaghetti_annual_region_encounters_post <- annual_region_encounters %>%
   rename(
     Year = `Fiscal\r\nYear`,
     Region = `Region`, 
@@ -82,18 +81,18 @@ spaghetti_annual_region_encounters <- annual_region_encounters %>%
   filter(Year >= 2015 & Year <= 2025)
 
 
-top_regions <- spaghetti_annual_region_encounters %>%
+top_regions <- spaghetti_annual_region_encounters_post %>%
   group_by(Region) %>%
   summarise(Total = sum(Encounters)) %>%
   arrange(desc(Total)) %>%
   slice_head(n = 5)
 
-spaghetti_annual_region_encounters_filtered <- spaghetti_annual_region_encounters %>%
+spaghetti_annual_region_encounters_filtered_post <- spaghetti_annual_region_encounters_post %>%
   filter(Region %in% top_regions$Region)
 
 
-print(spaghetti_annual_region_encounters_filtered)
-ggplot(spaghetti_annual_region_encounters, aes(x = Year, y = Encounters, color = Region)) +
+print(spaghetti_annual_region_encounters_filtered_post)
+ggplot(spaghetti_annual_region_encounters_post, aes(x = Year, y = Encounters, color = Region)) +
   geom_line(size = 1) +
   geom_point(size = 2) +
   labs(
@@ -108,3 +107,45 @@ ggplot(spaghetti_annual_region_encounters, aes(x = Year, y = Encounters, color =
   )
 ```
 
+
+
+```{r}
+
+# Load annual region data
+annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
+glimpse(annual_region_encounters)
+
+colnames(annual_region_encounters)
+
+# Clean
+spaghetti_annual_region_encounters_all <- annual_region_encounters %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  )
+
+
+regions <- spaghetti_annual_region_encounters_all %>%
+  group_by(Region) %>%
+  summarise(Total = max(Encounters))
+
+spaghetti_annual_region_encounters_filtered_all <- spaghetti_annual_region_encounters %>%
+  filter(Region %in% top_regions$Region)
+
+
+print(spaghetti_annual_region_encounters_filtered_all)
+ggplot(spaghetti_annual_region_encounters_all, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2004–2014)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
