@@ -31,8 +31,8 @@ read_child_sum_health
 #Installing ggplot to visualize the data. 
 install.packages("ggplot2", dependencies = T) 
 
-ggplot(data = read_child_sum_health, mapping = aes(x = Topic, y = y_variable, color = Classification)) +
-   geom_point(size = 5)
+ggplot(data = read_child_sum_health, mapping = aes(x = SUBGROUP, y = ESTIMATE, color = CLASSIFICATION)) +
+   geom_bar(stat = "identity")
 
 ```
 #Trying to create a plot of the data. 
