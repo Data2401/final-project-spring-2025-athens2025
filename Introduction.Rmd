@@ -1,30 +1,41 @@
 ---
-title: "Introduction"
+title: "Shifting Borders: Analyzing U.S. Immigration Trends Through the Years"
 output: html_document
 ---
 
 
-INTRODUCTION: 
-When you think about what makes America, AMERICA, certain thoughts come to mind. Most importantly our diverse population. Well, we didn’t all get here by magic. One person or a group of people, a family perhaps, migrated here for a multitude of reasons i.e. fleeing violence, poverty, and ultimately seeking opportunity. We are a nation of immigrants, and have been since our conception. Our project centers around this defining feature of American life by exploring immigration trends in the United States, using data collected by U.S. Customs and Border Protection's Office of Field Operations (OFO). Our focus begins in 2004, a pivotal year in the modern immigration landscape.
 
-Why does our data start in 2004? 
+#INTRODUCTION: 
+
+When you think about what makes America, **AMERICA**, certain thoughts come to mind. Most importantly our diverse population. Well, we didn’t all get here by magic. One person or a group of people, a family perhaps, migrated here for a multitude of reasons i.e. fleeing violence, poverty, and ultimately seeking opportunity. We are a nation of immigrants, and have been since our conception. 
+
+Our project centers around this defining feature of American life by exploring immigration trends in the United States, using data collected by U.S. Customs and Border Protection's Office of Field Operations (OFO). Our focus begins in 2004, a pivotal year in the modern immigration landscape.
+
+##Why does our data start in 2004? 
 To grasp, the importance of our data we must paint the picture of what was going on in the United States immigration landscape, pre-2004. 
-PRE-2004 IMMIGRATION LANDSCAPE: 
+###**PRE-2004 IMMIGRATION LANDSCAPE:**
 Mostly European immigrants… The Story of Immigration to the United States | FAIRstory #11…
 
 
 However, security concerns following 9/11 in 2001 dramatically reshaped how the U.S. approached immigration enforcement. The creation of the Department of Homeland Security (DHS) in 2002 brought multiple immigration functions under one roof, with a sharp increase in border surveillance, administrative enforcement, and data collection.
-2004, THE TURNING POINT: 
+
+###**2004, THE TURNING POINT:**
+
 By 2004, new post-9/11 policies were fully in effect, reshaping how immigration was tracked, processed, and reported. That’s why most modern datasets — including the one we’re analyzing — begin here. It marks the start of a new era: one that emphasizes data-driven border enforcement, detailed classifications, and nuanced tracking by citizenship, family status, enforcement outcomes, and more.
-POST – 2004: 
+
+###**POST–2004 IMMIGRATION LANDSCAPE:** 
+
 From 2004 onward, immigration patterns fluctuated in response to political leadership, global conflicts, economic shifts, and humanitarian crises. For instance:
+
 •	In 2015, the U.S. saw a surge in unaccompanied minors and family units from Central America.
 •	The COVID-19 pandemic (2020–2021) disrupted migration drastically.
 •	In recent years, increased migration from Venezuela, Haiti, and Nicaragua has reshaped the encounter landscape.
 2015, Largest #Finish thought from video. 
 
-ABOUT OUR DATASET:
+##ABOUT OUR DATASET:
+
 The dataset we’re analyzing is sourced from the KHSM Encounters (OFO) reports and contains encounter-level data tracked by:
+
 •	Year/Month
 •	Citizenship
 •	Region
@@ -32,13 +43,17 @@ The dataset we’re analyzing is sourced from the KHSM Encounters (OFO) reports 
 •	Enforcement vs Administrative Actions
 •	Field Office Location
 
-Our main questions: 
+##**Research questions:**
+
 Why does our data start in 2004? 
 What happened in 2004? 
-Questions that Chat helped with. 
+#Questions that Chat helped with. 
+
+
 1.	How have total border encounters changed over time (2004–present)?
 2.	Which nationalities are most commonly encountered and how have they shifted over time?
 3.	How does family status (e.g., single adult vs family unit) impact enforcement outcomes?
 4.	Are there regional patterns in encounter trends — and which field offices process the highest volumes?
 
-Questions that came up as we deepened our understanding of the dataset: adding to see how it affects my commit and push process. 
+Questions that came up as we deepened our understanding of the dataset: adding to see how it affects my commit and push process.
+
