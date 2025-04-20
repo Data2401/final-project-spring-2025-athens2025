@@ -1,4 +1,8 @@
 ---
+Team: "Athens2025"
+Members: "Precious Merenu"
+         "Justin Perez"
+         "Claudia Dominguez"
 title: "Introduction"
 output: html_document
 ---
