@@ -14,6 +14,8 @@ Our project centers around this defining feature of American life by exploring i
 ##Why does our data start in 2004? 
 To grasp, the importance of our data we must paint the picture of what was going on in the United States immigration landscape, pre-2004. 
 ###**PRE-2004 IMMIGRATION LANDSCAPE:**
+
+REVAMP THIS KNOWLEDGE!!
 Mostly European immigrants… The Story of Immigration to the United States | FAIRstory #11…
 
 
@@ -56,4 +58,220 @@ What happened in 2004?
 4.	Are there regional patterns in encounter trends — and which field offices process the highest volumes?
 
 Questions that came up as we deepened our understanding of the dataset: adding to see how it affects my commit and push process.
+
+___
+---
+Spaghetti Graph of 2004 - 2014.
+```{r}
+#Import libraries.
+
+#Load ReadXL to be able to read Excel sheets.
+library(readxl) 
+
+#Load dplyr for data manipulation.
+library(dplyr) 
+
+#Load Ggplot to display data visualizations.
+library(ggplot2) 
+
+```
+
+
+```{r}
+
+#Define path to Excel file and load annual region data.
+annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
+
+print("A glimpsee into the data: ")
+glimpse(annual_region_encounters)
+print("___________________________")
+
+print("Let's see the column names: ")
+colnames(annual_region_encounters)
+
+print("How many regions are there?")
+length(unique(annual_region_encounters$Region))
+
+
+#Pipe the dataframe into the distinct function so that it can pull all the unique regions. 
+annual_region_encounters %>%
+  distinct(Region)
+
+```
+Now we have an idea of what the dataset contains we want to visualize it. The plot of choice will be a spagetti plot because....
+
+```{r}
+# Clean and filter for 2004–2014
+#Pipe in the data and rename the columns for future readability. 
+spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  ) %>%
+  filter(Year >= 2004 & Year <= 2014)
+
+length(unique(annual_region_encounters$Region))
+
+
+top_regions <- spaghetti_annual_region_encounters_pre %>%
+  group_by(Region) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n = 5)
+
+spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
+  filter(Region %in% top_regions$Region)
+
+
+print(spaghetti_annual_region_encounters_filtered_pre)
+ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2004–2025)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+```{r}
+
+# Load annual region data
+annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
+glimpse(annual_region_encounters)
+
+colnames(annual_region_encounters)
+
+# Clean and filter for 2004–2014
+spaghetti_annual_region_encounters_post <- annual_region_encounters %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  ) %>%
+  filter(Year >= 2015 & Year <= 2025)
+
+
+top_regions <- spaghetti_annual_region_encounters_post %>%
+  group_by(Region) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n = 5)
+
+spaghetti_annual_region_encounters_filtered_post <- spaghetti_annual_region_encounters_post %>%
+  filter(Region %in% top_regions$Region)
+
+
+print(spaghetti_annual_region_encounters_filtered_post)
+ggplot(spaghetti_annual_region_encounters_post, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2015–2025)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+
+
+```{r}
+
+# Load annual region data
+annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
+glimpse(annual_region_encounters)
+
+colnames(annual_region_encounters)
+
+# Clean
+spaghetti_annual_region_encounters_all <- annual_region_encounters %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  )
+
+
+regions <- spaghetti_annual_region_encounters_all %>%
+  group_by(Region) %>%
+  summarise(Total = max(Encounters))
+
+spaghetti_annual_region_encounters_filtered_all <- spaghetti_annual_region_encounters %>%
+  filter(Region %in% top_regions$Region)
+
+
+print(spaghetti_annual_region_encounters_filtered_all)
+ggplot(spaghetti_annual_region_encounters_all, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2004–2014)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+Spaghetti Graph of 2015 - 2025.
+```{r}
+library(readxl)
+library(dplyr)
+library(ggplot2)
+
+# Load annual region data
+data <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
+glimpse(data)
+
+colnames(data)
+
+# Clean and filter for 2015–2025
+spaghetti_data <- data %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  ) %>%
+  filter(Year >= 2015 & Year <= 2025)
+
+
+top_regions <- spaghetti_data %>%
+  group_by(Region) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n = 5)
+
+spaghetti_filtered <- spaghetti_data %>%
+  filter(Region %in% top_regions$Region)
+
+
+print(spaghetti_filtered)
+ggplot(spaghetti_data, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2014–2025)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
 
