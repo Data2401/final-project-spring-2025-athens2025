@@ -246,3 +246,8 @@ ggplot(filtered_full_data, aes(x = Year, y = Encounters, color = Region)) +
   )
 
 ```
+Summary: 
+
+Now that we put all these factors together it is 
+
+Looking at something that seems so... to American 
