@@ -1,13 +1,5 @@
 ---
-<<<<<<< HEAD
-Team: "Athens2025"
-Members: "Precious Merenu"
-         "Justin Perez"
-         "Claudia Dominguez"
-title: "Introduction"
-=======
 title: "Shifting Borders: Analyzing U.S. Immigration Trends Through the Years"
->>>>>>> 89e037c3c86aa341ff54b961b16e9714ca046f06
 output: html_document
 ---
 
@@ -109,7 +101,7 @@ annual_region_encounters %>%
 Now we have an idea of what the dataset contains we want to visualize it. The plot of choice will be a spagetti plot because....
 
 ```{r}
-# Clean and filter for 2004–2014
+# Clean and filter for 2004–2025 so that we can get a full picture of all the data. 
 #Pipe in the data and rename the columns for future readability. 
 spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
   rename(
@@ -117,7 +109,7 @@ spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
     Region = `Region`, 
     Encounters = `Quantity`
   ) %>%
-  filter(Year >= 2004 & Year <= 2014)
+  filter(Year >= 2004 & Year <= 2025)
 
 length(unique(annual_region_encounters$Region))
 
@@ -125,8 +117,7 @@ length(unique(annual_region_encounters$Region))
 top_regions <- spaghetti_annual_region_encounters_pre %>%
   group_by(Region) %>%
   summarise(Total = sum(Encounters)) %>%
-  arrange(desc(Total)) %>%
-  slice_head(n = 5)
+  arrange(desc(Total)) 
 
 spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
   filter(Region %in% top_regions$Region)
@@ -147,7 +138,61 @@ ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, col
     plot.title = element_text(face = "bold", size = 14)
   )
 ```
+What this data is telling us? 
 
+From what we know about the political landscape at the time, 9/11/2001 was the initial dominoe effect that....
+
+
+Despite all that took place around 2015 we notice a spike in 2015, which is indicative of...
+
+We also notice a sharp decline in 2020-2021, which so happens to coincide with the World Health Organization declaration of the COVID-19 pandemic. 
+
+that decline can be seen in all borders except one, the coastal one. We took to the internet to answer why, while everyone, everyplace in the world seemed to stop, that boarders encounters not only stayed steady but seemed to increase...
+From the data there seems to be a spike in the 
+
+Let's take a closer look at 2014-2025. 
+
+
+```{r}
+# Clean and filter for 2004–2025 so that we can get a full picture of all the data. 
+#Pipe in the data and rename the columns for future readability. 
+spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  ) %>%
+  filter(Year >= 2014 & Year <= 2025)
+
+length(unique(annual_region_encounters$Region))
+
+
+top_regions <- spaghetti_annual_region_encounters_pre %>%
+  group_by(Region) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n = 5)
+
+spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
+  filter(Region %in% top_regions$Region)
+
+
+print(spaghetti_annual_region_encounters_filtered_pre)
+ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2014–2025)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+The next question to answer is: what is driving these stark flunctuations? 
 ```{r}
 
 # Load annual region data
