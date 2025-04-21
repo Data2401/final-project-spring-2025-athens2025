@@ -12,18 +12,30 @@ When you think about what makes America, **AMERICA**, certain thoughts come to m
 Our project centers around this defining feature of American life by exploring immigration trends in the United States, using data collected by U.S. Customs and Border Protection's Office of Field Operations (OFO). Our focus begins in 2004, a pivotal year in the modern immigration landscape.
 
 ##Why does our data start in 2004? 
+
 To grasp, the importance of our data we must paint the picture of what was going on in the United States immigration landscape, pre-2004. 
+
 ###**PRE-2004 IMMIGRATION LANDSCAPE:**
+.
+Long story short, the immigration story of America begins with the first settlers from Europe that were mostly fleeing to escape religious persecution. As decades and centuries past the "New Americans" started to find  way to keep certain people out while allowing others to make America home. Thus forming the infancy of what we know as our Immigration Policy. 
 
-REVAMP THIS KNOWLEDGE!!
-Mostly European immigrants… The Story of Immigration to the United States | FAIRstory #11…
+One example being the Chinese Exclusion Act of 1882 was past that excluded Chinese laborers from being able to migrate here for fear of that they would "take our jobs". Sounds familiar, doesn't it?
 
+While purposely excluding others, the immigration policy of the United States at the time did favor other rational groups, mostly white, Anglo-Saxon, Protestant (W.A.S.P.) Europeans. 
 
-However, security concerns following 9/11 in 2001 dramatically reshaped how the U.S. approached immigration enforcement. The creation of the Department of Homeland Security (DHS) in 2002 brought multiple immigration functions under one roof, with a sharp increase in border surveillance, administrative enforcement, and data collection.
+Fast forward to now, maybe the sentiment of wanting to keep people out is just as American as they come. But over time, mostly after the Immigration and Nationality Act of 1965, the U.S. worked to remove it's racist racially motivated quotas. Official borders were created and America seemed more open to Asylum seekers. 
+
+Things began to change on 9/11/2001. 
+
+Immigration policy became synonymous with National Security. 
+
+The Bush Administration created the Department of Homeland Security in 2002. And border control and enforcement became more aggressive, and militant. 
+
 
 ###**2004, THE TURNING POINT:**
+The reason our graph starts in 2004 is because it marks the beginning of a new era in U.S. immigration policy — one defined by heightened national security and data collection following the 9/11 attacks.
 
-By 2004, new post-9/11 policies were fully in effect, reshaping how immigration was tracked, processed, and reported. That’s why most modern datasets — including the one we’re analyzing — begin here. It marks the start of a new era: one that emphasizes data-driven border enforcement, detailed classifications, and nuanced tracking by citizenship, family status, enforcement outcomes, and more.
+By 2004, new post-9/11 policies were fully in effect, reshaping how immigration was tracked, processed, and reported. 
 
 ###**POST–2004 IMMIGRATION LANDSCAPE:** 
 
@@ -47,20 +59,22 @@ The dataset we’re analyzing is sourced from the KHSM Encounters (OFO) reports 
 
 ##**Research questions:**
 
-Why does our data start in 2004? 
-What happened in 2004? 
+How have total border encounters changed over time (2004–present)?
+
+
 #Questions that Chat helped with. 
+Why does our data start in 2004? 
+What happened in 2004?
 
-
-1.	How have total border encounters changed over time (2004–present)?
-2.	Which nationalities are most commonly encountered and how have they shifted over time?
-3.	How does family status (e.g., single adult vs family unit) impact enforcement outcomes?
-4.	Are there regional patterns in encounter trends — and which field offices process the highest volumes?
-
-Questions that came up as we deepened our understanding of the dataset: adding to see how it affects my commit and push process.
+Which nationalities are most commonly encountered and how have they shifted over time?
+Are there regional patterns in encounter trends — and which field offices process the highest volumes?
 
 ___
----
+First things first, let's see the data!
+
+After speaking with Dr. Shoemaker we decided to use a spagetti graph to display our data because we learned that is the best way to display and analyse our data. A spagetti graph would allow us to  visualize how border encounters have changed over time across multiple regions simultaneously.
+
+
 Spaghetti Graph of 2004 - 2014.
 ```{r}
 #Import libraries.
