@@ -1,9 +1,9 @@
 ---
-title: "Shifting Borders: Analyzing U.S. Immigration Trends Through the Years"
-output: html_document
+title: "Shifting Borders_Analyzing U.S. Immigration Trends through the Years"
+author: "Precious M., Justin P., and Claudio D."
+date: "2025-04-22"
+output: powerpoint_presentation
 ---
-
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -354,3 +354,4 @@ Our analysis of the the KHSM Encounters (OFO) dataset starting at 2004 to the pr
 Ultimately, our data seems to reflect the fact that immigration is a mirror. It shows how we respond to fear, opportunity, and change. 
 
 With that in mind who knows what will happen in the future or what trajectory we will take? 
+
