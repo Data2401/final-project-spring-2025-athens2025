@@ -1,0 +1,93 @@
+
+---
+title: "Justin_Scratch"
+author: "Justin"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+
+library(readxl)
+library(dplyr)
+
+# Load the data
+file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
+sheet_name <- "Monthly Citizenship"
+df <- read_excel(file_path, sheet = sheet_name)
+
+
+df <- df %>%
+  rename(
+    Year = 'Fiscal\r\nYear',
+    Encounters = 'Quantity',
+    Origin = 'Citizenship'
+  )
+
+#glimpse(df)
+
+# Clean the data
+top_origin_encounters <- df %>%
+  select(Year, Month, Origin, Encounters) %>%
+  filter(!is.na(Origin) & !is.na(Encounters)) %>%
+  #mutate(Year = as.integer(Year), Encounters = as.numeric(Encounters)) %>%
+  group_by(Origin, Year, Month) %>%
+  summarise(Total = sum(Encounters)) %>%
+  group_by(Origin, Year) %>%
+  summarise(TotalOrigin = sum(Total)) %>%
+  arrange(desc(TotalOrigin), .by_group = TRUE) %>%
+  slice_head(n = 5) 
+  #mutate(OriginSelect = string(Origin))
+  #mutate(Year = as.integer(Year), Encounters = as.numeric(Encounters))
+
+#top_origins <- pull(top_origin_encounters, Origin)
+  
+#print(top_origin_encounters)
+```
+
+
+
+
+
+```{r}
+
+library(ggplot2)
+
+
+print(top_origin_encounters)
+ggplot(top_origin_encounters, aes(x = Year, y = Origin, color = Origin)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2014–2025)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+
+
+ # Create the scatterplot with boxplots
+ ggplot(top_origin_encounters, aes(x = Year, y = TotalOrigin, color = Origin)) +
+   geom_point(alpha = 0.5) + # Scatterplot#   
+   geom_boxplot(aes(group = Year), position = position_dodge(width = 0.8), width = 0.2) + # Boxplots
+ labs(title = "Scatterplot with Boxplots of Immigrants by Fiscal Year",
+      x = "Fiscal Year",
+      y = "Encounters") +
+   theme_minimal()
+
+
+
+```
+
+
+
