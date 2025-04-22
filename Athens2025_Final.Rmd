@@ -58,11 +58,6 @@ ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, col
 
 
 
-
-
-
-
-
 ```{r}
 
 # Load annual region data
