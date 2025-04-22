@@ -122,24 +122,26 @@ Now we have an idea of what the dataset contains we want to visualize it.
 #Pipe in the data and rename the columns for future readability. 
 spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
   rename(
-    Year = `Fiscal\r\nYear`,
+    Year = `Fiscal\r\nYear`,    # Rename column with newline characters to "Year"
     Region = `Region`, 
-    Encounters = `Quantity`
+    Encounters = `Quantity` # Rename "Quantity" to "Encounters" for better readability
   ) %>%
-  filter(Year >= 2004 & Year <= 2025)
+  filter(Year >= 2004 & Year <= 2025) # Keep only data from 2004 to 2025
 
+# Check how many unique regions are present in the dataset
 length(unique(annual_region_encounters$Region))
 
-
+# Identify top regions based on total encounters
 top_regions <- spaghetti_annual_region_encounters_pre %>%
   group_by(Region) %>%
-  summarise(Total = sum(Encounters)) %>%
-  arrange(desc(Total)) 
+  summarise(Total = sum(Encounters)) %>% # Sum encounters by region
+  arrange(desc(Total)) # Sort regions by descending encounter total
 
+# Filter the original preprocessed data to include only the top regions
 spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
   filter(Region %in% top_regions$Region)
 
-
+# Display the filtered dataset for inspection
 print(spaghetti_annual_region_encounters_filtered_pre)
 ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, color = Region)) +
   geom_line(size = 1) +
@@ -185,21 +187,23 @@ spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
     Region = `Region`, 
     Encounters = `Quantity`
   ) %>%
-  filter(Year >= 2014 & Year <= 2025)
+  filter(Year >= 2014 & Year <= 2025) # Keep only data from 2014 to 2025
 
+# Count the number of unique regions in the original dataset
 length(unique(annual_region_encounters$Region))
 
-
+# Identify the top 5 regions based on total encounters over the selected years
 top_regions <- spaghetti_annual_region_encounters_pre %>%
   group_by(Region) %>%
-  summarise(Total = sum(Encounters)) %>%
-  arrange(desc(Total)) %>%
-  slice_head(n = 5)
+  summarise(Total = sum(Encounters)) %>% # Calculate total encounters per region
+  arrange(desc(Total)) %>% # Sort from highest to lowest total
+  slice_head(n = 5) # Select only the top 5 regions
 
+# Filter the data to keep only the top 5 regions
 spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
   filter(Region %in% top_regions$Region)
 
-
+# Print the filtered data to visually confirm the result
 print(spaghetti_annual_region_encounters_filtered_pre)
 ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, color = Region)) +
   geom_line(size = 1) +
@@ -242,11 +246,11 @@ ggplot(full_data, aes(x = Year, y = Encounters, color = Region)) +
   geom_line(linewidth = 1) +
   geom_point(size = 2) +
 
-  geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
-  geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
-  geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray30") +
-  geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2004, linetype = "dashed", color = "green") +
+  geom_vline(xintercept = 2012, linetype = "dashed", color = "blue") +
+  geom_vline(xintercept = 2015, linetype = "dashed", color = "orange") +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "pink") +
+  geom_vline(xintercept = 2023, linetype = "dashed", color = "purple") +
 
   annotate("text", x = 2004, y = max(full_data$Encounters) * 0.95, 
            label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
@@ -263,13 +267,13 @@ ggplot(full_data, aes(x = Year, y = Encounters, color = Region)) +
     title = "Spaghetti Plot: Border Encounters by Region (2004–2025)",
     subtitle = "Policy milestones overlaid to reflect spikes and dips in migration trends",
     caption = "Source: KHSM Encounters (OFO)",
-    x = "Year",
-    y = "Encounters"
+    x = "Year", # Label for x-axis
+    y = "Encounters" # Label for y-axis
   ) +
-  theme_minimal() +
+  theme_minimal() + # Clean and modern visual theme
   theme(
-    legend.position = "right",
-    plot.title = element_text(face = "bold", size = 14)
+    legend.position = "right", # Show legend on the right
+    plot.title = element_text(face = "bold", size = 14) # Make title bold and prominent
   )
 
 ```
@@ -277,21 +281,23 @@ ggplot(full_data, aes(x = Year, y = Encounters, color = Region)) +
 
 Now that we put all these factors together let's sum up the data. 
 
-Between fiscal years 2004 and 2025, using the KHSM encounter data set published by Department of Homeland Security Key Metric Engine, we pop the question progress of American immigrant lands. Over more than two decades, U.S. attempts to control illegal immigration plus operational deviations from the administration of refugees have modified the volume and spread of border encounters.In the year 2004 was chosen as a starting point for our project because it marks an obvious turning point in U.S. immigration policy and national security policy. 
+Between fiscal years 2004 and 2025, using the KHSM encounter data set published by Department of Homeland Security Key Metric Engine, we start with the  progress of American immigrant lands. Over more than two decades, U.S. attempts to control illegal immigration plus operational deviations from the administration of refugees have modified the volume and spread of border encounters.The year 2004 was chosen as a starting point for our project because it marks an obvious turning point in U.S. immigration policy and national security policy. 
 
--As response to the September 11, 2001, terrorist attacks fundamentally affected policy changes when congress passed law establishing Department of Homeland Security (DHS) as an independent entity within the structure that is government itself; thus it absorbed several agencies linked to Immigration's future fate,no less than border areas or customs enforcement. 
+-As response to the September 11, 2001, terrorist attacks fundamentally affected policy changes when congress passed law establishing Department of Homeland Security (DHS) as an independent entity within the structure that is government itself. 
 
 -By 2004, collecting procedures had become more unified and reliable, permitting year to year comparisons to be made with confidence, renaming illegal immigration as one of the main hegemonic tasks of national defense, this shift changed the direction and character of immigration administration. Because of issues surrounding public safety,regulatory enforcement with respect to immigration gradually leaned more towards national defense, sayings also tended over growing liberty restrictions on Asian southerners. 
 
 -The data set used in this analysis is KHSM Encounters (OFO), which consists of several worksheets, we examined the Sheet On Monthly Counts that provides data at the monthly level about encounter volumes, sheet Annual By Region that provides complete reports on encounters in each region for a whole year, permitting geographical comparisons over time.Including fiscal year and month, region of encounter, total number of encounters, field office respectively though the last column was not used for analysis.
 
--We used data setup and cleaning through dplyr to clean and reshaping, the data underwent consistent variable naming and data preference publication, the specific racks included the renaming variables to make them easier to manipulate such as converting Fiscal Year to Year 
+-We used data setup and cleaning through dplyr to clean and reshaping, the data underwent consistent variable naming and data publication, the specific racks included the renaming variables to make them easier to manipulate such as converting Fiscal Year to Year 
 
--Between 2004 and 2025, rows are filtered pass through when it comes to summary and grouping appointments, we did it by month and region, and both visualizations and analytically tools 
+-Between 2004 and 2025, rows are filtered pass through when it comes to summary and grouping appointments, we did it by month and region.
 
--Additionally, we created clear and effective visualizations of various types using ggplot2. Among other things, the following graphs were produced tho Month ly Averages Plot: A bar and point plot indicates that the average number of appointments is month by month, Year over year, this graph made it possible to identify seasonal patterns in the data which were more encounters happen during dry springs and early summers due not only to natural migrations but increased enforcement efforts.
+-Additionally, we created clear and effective visualizations of various types using ggplot2. Among other things, the following graphs were produced tho Month ly Averages Plot: A bar and point plot indicates that the average number of appointments is month by month, Year over year, this graph made it possible to identify seasonal patterns in the data which were more encounters happen during dry springs and early summers.
 
--We implemented the Spaghetti Plot: from 2004 to 2014 By 2015, the second decade of analysis was under closer observation, and the year 2015 witnessed a sudden upsurge in these encounters, caused by an influx of unaccompanied minors and family units from Central America. In 2020 to 2021 another major trend emerged, that was the COVID-19 pandemic and Title 42 policy had the effect of virtually declaring an end to arrest or apprehension for asylum processing. 
+-We implemented the Spaghetti Plot: from 2004 to 2014 By 2015, the second decade of analysis was under closer observation, and the year 2015 witnessed a sudden upsurge in these encounters, caused by an wave of unaccompanied minors and family units from Central America. 
+
+-In 2020 to 2021 another major trend emerged, that was the COVID-19 pandemic and Title 42 policy had the effect of virtually declaring an end to arrest or apprehension for asylum processing. 
 
 -Entirely apart from this steep decline, the Coastal region was in fact bucking percentages with more frequent or steady encounters, suggesting that other paths of migration existed during lock down years. 
 
@@ -301,8 +307,8 @@ Between fiscal years 2004 and 2025, using the KHSM encounter data set published 
 2020: COVID-19 and Title 42 
 2023: End of Title 42 under Biden administration , these annotations connect fluctuations in encounter data with real world policy and geopolitical events. They show how immigration numbers are rarely random; they respond to a complex interplay of laws, leadership, and global events.
 
-- Interpretation of Trends, from our analysis, we draw several conclusions: Immigration law enforcement is highly reactive to political priorities and crisis events.The Trump administration 2017–2020 was a period of noticeably strict immigration actions that saw multiple executive orders and restraints on both movements, and COVID-19 brought on a historically unprecedented drop in encounters, followed by a sharp rebound after the pandemic 3 especially after emergency policies were removed. 
+- Interpretation of Trends, from our analysis, we draw several conclusions: Immigration law enforcement is highly reactive to political priorities and crisis events.The Trump administration 2017–2020 was a period of noticeably strict immigration actions that saw multiple executive orders and restraints on both movements.
 
--Furthermore, The Coastal region showed distinct behavior that could indicate local patterns of maritime migration or areas where enforcement lacks coverage, these findings confirm that immigration is not simply a matter of numbers. They are representative of who we are as a nation, how we react to fear, what we value in terms of human rights, and how global instability is managed at our borders.
+-Furthermore, The Coastal region showed distinct behavior that could indicate local patterns of maritime migration or areas where enforcement lacks coverage, these findings confirm that immigration is not simply a matter of numbers. 
 
 -Our visual and contextual analysis reveals that from 2004 to 2025 one cannot understand patterns in U.S. immigration in isolation, they are directly influenced by changes in administration, global health emergencies, economic crimp times, and humanitarian crises.

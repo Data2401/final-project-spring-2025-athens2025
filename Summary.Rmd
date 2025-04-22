@@ -3,21 +3,23 @@ title: "Summary"
 output: html_document
 ---
 
-Between fiscal years 2004 and 2025, using the KHSM encounter data set published by Department of Homeland Security Key Metric Engine, we pop the question progress of American immigrant lands. Over more than two decades, U.S. attempts to control illegal immigration plus operational deviations from the administration of refugees have modified the volume and spread of border encounters.In the year 2004 was chosen as a starting point for our project because it marks an obvious turning point in U.S. immigration policy and national security policy. 
+Between fiscal years 2004 and 2025, using the KHSM encounter data set published by Department of Homeland Security Key Metric Engine, we start with the  progress of American immigrant lands. Over more than two decades, U.S. attempts to control illegal immigration plus operational deviations from the administration of refugees have modified the volume and spread of border encounters.The year 2004 was chosen as a starting point for our project because it marks an obvious turning point in U.S. immigration policy and national security policy. 
 
--As response to the September 11, 2001, terrorist attacks fundamentally affected policy changes when congress passed law establishing Department of Homeland Security (DHS) as an independent entity within the structure that is government itself; thus it absorbed several agencies linked to Immigration's future fate,no less than border areas or customs enforcement. 
+-As response to the September 11, 2001, terrorist attacks fundamentally affected policy changes when congress passed law establishing Department of Homeland Security (DHS) as an independent entity within the structure that is government itself. 
 
 -By 2004, collecting procedures had become more unified and reliable, permitting year to year comparisons to be made with confidence, renaming illegal immigration as one of the main hegemonic tasks of national defense, this shift changed the direction and character of immigration administration. Because of issues surrounding public safety,regulatory enforcement with respect to immigration gradually leaned more towards national defense, sayings also tended over growing liberty restrictions on Asian southerners. 
 
 -The data set used in this analysis is KHSM Encounters (OFO), which consists of several worksheets, we examined the Sheet On Monthly Counts that provides data at the monthly level about encounter volumes, sheet Annual By Region that provides complete reports on encounters in each region for a whole year, permitting geographical comparisons over time.Including fiscal year and month, region of encounter, total number of encounters, field office respectively though the last column was not used for analysis.
 
--We used data setup and cleaning through dplyr to clean and reshaping, the data underwent consistent variable naming and data preference publication, the specific racks included the renaming variables to make them easier to manipulate such as converting Fiscal Year to Year 
+-We used data setup and cleaning through dplyr to clean and reshaping, the data underwent consistent variable naming and data publication, the specific racks included the renaming variables to make them easier to manipulate such as converting Fiscal Year to Year 
 
--Between 2004 and 2025, rows are filtered pass through when it comes to summary and grouping appointments, we did it by month and region, and both visualizations and analytically tools 
+-Between 2004 and 2025, rows are filtered pass through when it comes to summary and grouping appointments, we did it by month and region.
 
--Additionally, we created clear and effective visualizations of various types using ggplot2. Among other things, the following graphs were produced tho Month ly Averages Plot: A bar and point plot indicates that the average number of appointments is month by month, Year over year, this graph made it possible to identify seasonal patterns in the data which were more encounters happen during dry springs and early summers due not only to natural migrations but increased enforcement efforts.
+-Additionally, we created clear and effective visualizations of various types using ggplot2. Among other things, the following graphs were produced tho Month ly Averages Plot: A bar and point plot indicates that the average number of appointments is month by month, Year over year, this graph made it possible to identify seasonal patterns in the data which were more encounters happen during dry springs and early summers.
 
--We implemented the Spaghetti Plot: from 2004 to 2014 By 2015, the second decade of analysis was under closer observation, and the year 2015 witnessed a sudden upsurge in these encounters, caused by an influx of unaccompanied minors and family units from Central America. In 2020 to 2021 another major trend emerged, that was the COVID-19 pandemic and Title 42 policy had the effect of virtually declaring an end to arrest or apprehension for asylum processing. 
+-We implemented the Spaghetti Plot: from 2004 to 2014 By 2015, the second decade of analysis was under closer observation, and the year 2015 witnessed a sudden upsurge in these encounters, caused by an wave of unaccompanied minors and family units from Central America. 
+
+-In 2020 to 2021 another major trend emerged, that was the COVID-19 pandemic and Title 42 policy had the effect of virtually declaring an end to arrest or apprehension for asylum processing. 
 
 -Entirely apart from this steep decline, the Coastal region was in fact bucking percentages with more frequent or steady encounters, suggesting that other paths of migration existed during lock down years. 
 
@@ -27,8 +29,8 @@ Between fiscal years 2004 and 2025, using the KHSM encounter data set published 
 2020: COVID-19 and Title 42 
 2023: End of Title 42 under Biden administration , these annotations connect fluctuations in encounter data with real world policy and geopolitical events. They show how immigration numbers are rarely random; they respond to a complex interplay of laws, leadership, and global events.
 
-- Interpretation of Trends, from our analysis, we draw several conclusions: Immigration law enforcement is highly reactive to political priorities and crisis events.The Trump administration 2017–2020 was a period of noticeably strict immigration actions that saw multiple executive orders and restraints on both movements, and COVID-19 brought on a historically unprecedented drop in encounters, followed by a sharp rebound after the pandemic 3 especially after emergency policies were removed. 
+- Interpretation of Trends, from our analysis, we draw several conclusions: Immigration law enforcement is highly reactive to political priorities and crisis events.The Trump administration 2017–2020 was a period of noticeably strict immigration actions that saw multiple executive orders and restraints on both movements.
 
--Furthermore, The Coastal region showed distinct behavior that could indicate local patterns of maritime migration or areas where enforcement lacks coverage, these findings confirm that immigration is not simply a matter of numbers. They are representative of who we are as a nation, how we react to fear, what we value in terms of human rights, and how global instability is managed at our borders.
+-Furthermore, The Coastal region showed distinct behavior that could indicate local patterns of maritime migration or areas where enforcement lacks coverage, these findings confirm that immigration is not simply a matter of numbers. 
 
 -Our visual and contextual analysis reveals that from 2004 to 2025 one cannot understand patterns in U.S. immigration in isolation, they are directly influenced by changes in administration, global health emergencies, economic crimp times, and humanitarian crises.
