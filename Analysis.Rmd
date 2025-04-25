@@ -6,13 +6,13 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE, echo=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
 
-```{r}
+```{r echo=FALSE, warning=FALSE}
 
 library(readxl)
 library(dplyr)
@@ -32,35 +32,41 @@ df <- df %>%
 
 #glimpse(df)
 
+origins_of_interest <- c('Mexico', 'China')
+
 # Clean the data
 top_origin_encounters <- df %>%
   select(Year, Month, Origin, Encounters) %>%
   filter(!is.na(Origin) & !is.na(Encounters)) %>%
+  filter(Origin == origins_of_interest) %>%
   #mutate(Year = as.integer(Year), Encounters = as.numeric(Encounters)) %>%
   group_by(Origin, Year, Month) %>%
   summarise(Total = sum(Encounters)) %>%
   group_by(Origin, Year) %>%
   summarise(TotalOrigin = sum(Total)) %>%
-  arrange(desc(TotalOrigin), .by_group = TRUE) %>%
-  slice_head(n = 5) 
+  #arrange(desc(TotalOrigin), .by_group = TRUE) %>%
+  #slice_head(n = 5) %>%
+  #select(Origin)
   #mutate(OriginSelect = string(Origin))
   #mutate(Year = as.integer(Year), Encounters = as.numeric(Encounters))
 
 #top_origins <- pull(top_origin_encounters, Origin)
   
-#print(top_origin_encounters)
+print(top_origin_encounters)
 ```
 
 
 
 
 
-```{r}
+```{r echo=FALSE, warning=FALSE}
 
 library(ggplot2)
 
 
-print(top_origin_encounters)
+#print(top_origin_encounters)
+
+
 ggplot(top_origin_encounters, aes(x = Year, y = Origin, color = Origin)) +
   geom_line(size = 1) +
   geom_point(size = 2) +
@@ -79,7 +85,7 @@ ggplot(top_origin_encounters, aes(x = Year, y = Origin, color = Origin)) +
  # Create the scatterplot with boxplots
  ggplot(top_origin_encounters, aes(x = Year, y = TotalOrigin, color = Origin)) +
    geom_point(alpha = 0.5) + # Scatterplot#   
-   geom_boxplot(aes(group = Year), position = position_dodge(width = 0.8), width = 0.2) + # Boxplots
+   geom_boxplot(aes(group = Year), position = position_dodge(width = 5.8), width = 0.2) + # Boxplots
  labs(title = "Scatterplot with Boxplots of Immigrants by Fiscal Year",
       x = "Fiscal Year",
       y = "Encounters") +
@@ -88,6 +94,85 @@ ggplot(top_origin_encounters, aes(x = Year, y = Origin, color = Origin)) +
 
 
 ```
+
+---
+title: "Testrmdfile"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("tidyverse")
+library(tidyverse)
+#install.packages("readxl")
+library(readxl)
+```
+
+
+```{r fig.height=4, fig.width=10}
+encounters <- 'KHSM Encounters (OFO) fy25m11.xlsx'
+excel_sheets(encounters)
+
+monthly_encounters <- read_excel(encounters, sheet = 'Monthly Count')
+
+monthly_encounter_df <- monthly_encounters %>% mutate(Fiscal_Year='Fiscal Year') %>%
+  group_by(Month) %>%
+  summarize(Month_Mean = mean(Quantity))
+
+print(monthly_encounter_df)
+
+monthly_encounter_df %>% 
+  ggplot(aes(x=Month, y=Month_Mean)) + 
+  geom_point() +
+  labs(title = "Key Homeland Security Metric - Office of Field Operations",
+       x = "Month",
+       y = "Monthly Average") +
+  theme_minimal()
+
+monthly_encounter_df %>%
+  ggplot(aes(x = Month, y = Month_Mean, fill = Month_Mean)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Key Homeland Security Metric - Office of Field Operations",
+    x = "Month",
+    y = "Monthly Average"
+  ) +
+  theme_minimal()
+
+
+
+```
+
+```{r}
+
+encounters <- 'KHSM Encounters (OFO) fy25m11.xlsx'
+#excel_sheets(encounters)
+family_encounters <- read_excel(encounters, sheet = 'Annual Family Status')
+
+head(family_encounters)
+
+
+
+```
+
+```{r}
+# Time lapse :D
+ggplot(monthly_encounter_df, aes(x = Month, y = Month_Mean, group = 1)) +
+  geom_line(color = "orange", size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Monthly Encounter Trend",
+    x = "Month",
+    y = "Average Encounters"
+  ) +
+  theme_minimal()
+geom_text(aes(label = round(Month_Mean, 1)), vjust = -0.5, size = 3)
+
+geom_smooth(method = "lm", se = FALSE, color = "purple", linetype = "dashed")
+
+```
+
+
 
 
 
