@@ -19,6 +19,60 @@ library(dplyr)
 
 # Load the data
 file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
+sheet_name <- "Annual Citizenship"
+df <- read_excel(file_path, sheet = sheet_name)
+
+glimpse(df)
+
+
+df <- df %>%
+  rename(
+    Year = 'Fiscal\r\nYear',
+    Encounters = 'Quantity',
+    Origin = 'Citizenship'
+  )
+
+# Clean the data
+top_origin_encounters <- df %>%
+  select(Year, Origin, Encounters) %>%
+  filter(!is.na(Origin) & !is.na(Encounters)) %>%
+  filter(Year==2015) %>%
+  group_by(Origin, Year) %>%
+  summarise(Total = sum(Encounters)) %>%
+  #summarise(TotalOrigin = sum(Total)) %>%
+  arrange(Total, desc=FALSE) %>%
+  slice_head(n = 5) %>%
+  #select(Origin)
+
+print(top_origin_encounters)
+
+
+ggplot(top_origin_encounters, aes(x = Year, y = Total, color = Origin)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2004–2014)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+
+
+```
+
+
+
+```{r echo=FALSE, warning=FALSE}
+
+library(readxl)
+library(dplyr)
+
+# Load the data
+file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
 sheet_name <- "Monthly Citizenship"
 df <- read_excel(file_path, sheet = sheet_name)
 
@@ -32,7 +86,7 @@ df <- df %>%
 
 #glimpse(df)
 
-origins_of_interest <- c('Mexico', 'China')
+origins_of_interest <- c('Mexico', 'El Salvador', 'Afghanistan')
 
 # Clean the data
 top_origin_encounters <- df %>%
@@ -47,10 +101,6 @@ top_origin_encounters <- df %>%
   #arrange(desc(TotalOrigin), .by_group = TRUE) %>%
   #slice_head(n = 5) %>%
   #select(Origin)
-  #mutate(OriginSelect = string(Origin))
-  #mutate(Year = as.integer(Year), Encounters = as.numeric(Encounters))
-
-#top_origins <- pull(top_origin_encounters, Origin)
   
 print(top_origin_encounters)
 ```
@@ -67,7 +117,7 @@ library(ggplot2)
 #print(top_origin_encounters)
 
 
-ggplot(top_origin_encounters, aes(x = Year, y = Origin, color = Origin)) +
+ggplot(top_origin_encounters, aes(x = Year, y = TotalOrigin, color = Origin)) +
   geom_line(size = 1) +
   geom_point(size = 2) +
   labs(
