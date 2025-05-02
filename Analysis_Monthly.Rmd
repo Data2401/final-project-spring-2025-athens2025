@@ -7,7 +7,7 @@ output:
 
 
 
-```{r setup, include=FALSE, echo=FALSE, warning=FALSE}
+```{r setup, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 
 knitr::opts_chunk$set(echo = FALSE)
 
@@ -65,20 +65,20 @@ monthly_origin_encounters <- monthly_origin_encounters %>%
   mutate(Month = factor(Month, levels = month_order, ordered = TRUE))
 
 
-# Group by Month and Citizenship, then sum the Quantity
+#Group by Month and Citizenship, then sum the Quantity
 monthly_avg_origin_encounters <- monthly_origin_encounters %>%
   group_by(Month, Origin) %>%
   summarise(AvgEncounters = mean(Encounters))
 
 
-# Find the top five Citizenship by Quantity per Month
+#Find the top five Citizenship by Quantity per Month
 top_monthly_avg_origin_encounters <- monthly_avg_origin_encounters %>%
   group_by(Month) %>%
   arrange(Month, desc(AvgEncounters)) %>%
   slice_head(n=5)
 
 
-library(ggplot2)
+#Plot
 ggplot(top_monthly_avg_origin_encounters, aes(x = Month, y = AvgEncounters, color = Origin, group = Origin)) +
   geom_line() +
   geom_point() +
