@@ -13,9 +13,9 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Introduction
 
-Our project centers around the defining feature of American life by exploring immigration trends in the United States using data collected by U.S. Customs and Border Protection’s (CBP) Office of Field Operations from 2004 to 2024 provided by the U.S. Office of Homeland Security Statistics.
+Our project centers around the defining feature of American life by exploring immigration trends in the United States using data collected by U.S. Customs and Border Protection’s (CBP) Office of Field Operations from 2004 to 2024 provided by the U.S. Office of Homeland Security Statistics.  How does U.S. Immigration policy impact CPB Encounters?
 
-Our approach overlays important U.S. Immigration policy events onto an exploratory analysis of CBP data from 2004 to 2024 to look for trends or inflection points in the data compared to U.S. policy enactments.  The data collected by CBP is provided in annual and monthly formats which we explore. Our analysis uses RStudio for data cleaning, data analysis and visualization on the source data directly without manual operations so the analysis is fully reproducible.
+Our approach overlays important U.S. Immigration policy events onto an exploratory analysis of CBP Encounter data from 2004 to 2024 to look for trends or inflection points in the data compared to U.S. policy enactments.  The data collected by CBP is provided in annual and monthly formats which we explore. Our analysis uses RStudio for data cleaning, data analysis and visualization on the source data directly without manual operations so the analysis is fully reproducible.
 
 ## Data Preparation & Display
 
@@ -132,7 +132,6 @@ labs(
 
 
 ### Annual Citizenship (Origin) Encounters
-
 Our next analysis was of the Annual Citizenship dataset which we refer to as Annual Origin.  We could not directly visualize all encounters by all countries of origin so we first summarized and counted all encounters by Origin which we then used to select the top five countries by encounter quantity.  We used this result to directly then filter on a new summary by gathering the top five origins and summarize the result by Origin and Year and found total encounters by Origin and Year.  We find another interesting uptick in encounters around the time when Remain in Mexico ended and of the top five countries of origin, the bottom two which did not spike seem to coincide with the Annual Region Encounters above.  Phillipines and Canada both seem like countries of origin that would not be affected by Remain in Mexico and the data trends as such.  Let's next look at types of encounters by family status.
 
 
@@ -234,7 +233,7 @@ ggplot(top_annual_origin_encounters, aes(x = Year, y = Total, color = Origin)) +
 
 ### Annual Encounters by Family Status
 
-Our analsis turns to Annual Family Status dataset which we summarize by Year and Family status to find total encounters by these categories.  We see again the uptick coinciding with the ending of the Remain in Mexico policy but this time we see also an uptick in the proportion of encounters of Family Unit Individuals.  This uptick does not seem evidently related to ending of Remain in Mexico.
+Our analysis turns to Annual Family Status dataset which we summarize by Year and Family status to find total encounters by these categories.  We see again the uptick coinciding with the ending of the Remain in Mexico policy but this time we see also an uptick in the proportion of encounters of Family Unit Individuals.  This uptick does not seem evidently related to ending of Remain in Mexico.
 
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
@@ -313,3 +312,11 @@ ggplot(annual_familystatus_encounters, aes(x = Year, y = Total, fill = Family)) 
 
 
 ```
+
+
+## Summary
+
+Our analysis seeks to find data trends in U.S. Customs and Border Protection’s Encounters Key Homeland Security Metric (KHSM) to inform how U.S. Immigration policy impacts this defining feature of American life.  Using annual regional encounter data, annual country of origin encounter data and annaul family status encounter data, we identify a large increase in CBP encounters at ports of entry that are most affected by Remain in Mexico policy ending and we identify that top countries of origin based on encouter quantities that would most likely be encountered at these ports of entry impacted by Remain in Mexico increase as well.  Our conclusion is that the ending of the Remain in Mexico policy caused a significant increase in immigration according to the encounters at specific ports of entry.
+
+
+

@@ -286,6 +286,11 @@ ggplot(annual_familystatus_encounters, aes(x = Year, y = Total, fill = Family)) 
 
 
 
+
+
+
+
+
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
 
