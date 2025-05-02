@@ -9,10 +9,11 @@ output:
 
 
 
+
 ```{r echo=FALSE, warning=FALSE}
 
 
-#-----------------Border Encounters by US Region: 2004–2025-----------------
+#-----------------CBP Encounters by US Region: 2004–2024-----------------
 
 
 #Read Microsoft Excel files
@@ -82,7 +83,7 @@ ggplot(annual_region_encounters, aes(x = Year, y = Total, color = Region)) +
            label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
 
 labs(
-    title = "Border Encounters by Region: 2004–2024",
+    title = "CBP Encounters by Region: 2004–2024",
     subtitle = "Policy milestones overlaid to reflect spikes and dips in migration trends",
     caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
     x = "Year",
@@ -91,6 +92,7 @@ labs(
   ) +
   theme_minimal() +
   theme(
+    panel.border = element_rect(color = 'grey', fill = NA, size = 1),
     legend.position = "right",
     plot.title = element_text(face = "bold", size = 14),
     plot.subtitle = element_text(size = 12),
@@ -107,7 +109,7 @@ labs(
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
 
-#-----------------Top Encounters by Origin: 2004–2025-----------------
+#-----------------CBP Encounters by Top Origins: 2004–2025-----------------
 
 
 #Read Microsoft Excel files
@@ -184,13 +186,14 @@ ggplot(top_annual_origin_encounters, aes(x = Year, y = Total, color = Origin)) +
            label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
   
   labs(
-    title = "Top Encounters by Origin: 2004–2025",
+    title = "CBP Encounters by Top Origins: 2004–2025",
     caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
     x = "Year",
     y = "Encounters"
   ) +
   theme_minimal() +
   theme(
+    panel.border = element_rect(color = 'grey', fill = NA, size = 1),
     legend.position = "right",
     plot.title = element_text(face = "bold", size = 14)
   )
@@ -203,6 +206,11 @@ ggplot(top_annual_origin_encounters, aes(x = Year, y = Total, color = Origin)) +
 
 
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
+
+
+#-----------------CBP Encounters by Top Origins: 2004–2025-----------------
+
+
 
 library(readxl)
 library(dplyr)
@@ -260,12 +268,17 @@ ggplot(annual_familystatus_encounters, aes(x = Year, y = Total, fill = Family)) 
   annotate("text", x = 2023, y = max(annual_familystatus_encounters$Total) * 0.85, 
            label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
   
-  labs(title = 'Encounters by Family Status: 2004–2025',
+  labs(title = 'CBP Encounters by Family Status: 2004–2024',
        caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
        x = 'Year',
        y = 'Encounters',
        fill = 'Family Status') +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    panel.border = element_rect(color = 'grey', fill = NA, size = 1),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
 
 
 ```

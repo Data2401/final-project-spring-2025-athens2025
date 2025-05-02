@@ -1,30 +1,315 @@
 ---
-title: "US Immigration Analysis: 2004–2024"
+title: "Analysis of US Immigration Policy Impact: 2004–2024"
 author: "Group Athens - DATA 2401"
 date: "`r Sys.Date()`"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+
 ```
 
-## R Markdown
+## Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Our project centers around the defining feature of American life by exploring immigration trends in the United States using data collected by U.S. Customs and Border Protection’s (CBP) Office of Field Operations from 2004 to 2024 provided by the U.S. Office of Homeland Security Statistics.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Our approach overlays important U.S. Immigration policy events onto an exploratory analysis of CBP data from 2004 to 2024 to look for trends or inflection points in the data compared to U.S. policy enactments.  The data collected by CBP is provided in annual and monthly formats which we explore. Our analysis uses RStudio for data cleaning, data analysis and visualization on the source data directly without manual operations so the analysis is fully reproducible.
 
-```{r cars}
-summary(cars)
+## Data Preparation & Display
+
+The CBP Encounters Key Homeland Security Metric (KHSM) includes any encounter of a removable alien. This includes three sets of data:
+
+- People who unlawfully crossed the border between ports of entry.
+- People who entered at a port of entry but are inadmissible.
+- People expelled under the Title 42 public health order between March 2020 and May 2023 due to COVID-19
+
+Source: [CBP Encounters - Key Homeland Security Metric](https://ohss.dhs.gov/sites/default/files/2025-01/KHSM%20Encounters%20%28OFO%29%20fy25m11.xlsx)
+
+CBP Encounters data provided by Office of Homeland Security Statistics' begins in 2004 and data collection is on going.  Given the project scope and data continuing to be collected, our first step in preparing the data was to filter the data for analysis to only years for which are fully covered in our dataset so 2025 was excluded from our analysis.  Our analysis starts with three initial steps outlined below:
+
+1. Filter data to years between and including 2004 and 2024
+2. Sanitize column headers and rename columns to more sensible nomenclature
+3. Summarize and visualize data for exploration
+
+## Exploratory Data Analysis
+
+### Annual Region Encounters
+Our analysis starts with CBP Encounters by Annual Region.  We overlay six U.S Immigration policy events corresponding to the year enacted.  We see a steep increase in CBP Encounters in 2021 particularly at *Southwest Land Border* and *Air Ports of Entry/Interior* which seemed like an interesting data trend as it coincided directly to the ending of the U.S. Immigration policy of *Migrant Protection Protocol* also known as **Remain in Mexico**.  Let's explore more.
+
+
+```{r echo=FALSE, warning=FALSE}
+
+
+#-----------------CBP Encounters by US Region: 2004–2024-----------------
+
+
+#Read Microsoft Excel files
+library(readxl)
+#Use ggplot
+library(ggplot2)
+
+#Use dplyr and silence warnings
+library(dplyr, warn.conflicts = FALSE)
+options(dplyr.summarise.inform = FALSE)
+
+
+annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
+
+
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+annual_region_encounters_sanitize <- annual_region_encounters %>%
+  rename(
+    Year = 'Fiscal\r\nYear',
+    Region = 'Region',
+    Encounters = 'Quantity'
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
+
+
+#Sum encounters by region
+annual_region_encounters <- annual_region_encounters_sanitize %>%
+  group_by(Region, Year) %>%
+  summarize(Total = sum(Encounters))
+
+
+#Add a factor to help order the legend to match quantity of encounters heirarchy
+annual_region_encounters <- annual_region_encounters %>%
+  dplyr::filter(Region %in% c('Southwest Land Border', 'Air Ports of Entry/Interior', 'Northern Land Border',  'Coastal Border'))
+annual_region_encounters$Region <- factor(annual_region_encounters$Region, levels=c('Southwest Land Border', 'Air Ports of Entry/Interior', 'Northern Land Border', 'Coastal Border'))
+
+
+#Option to not use scientific notation
+options(scipen=999)
+
+
+#Plot spaghetti plot to contrast regional encounters
+ggplot(annual_region_encounters, aes(x = Year, y = Total, color = Region)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+
+  #Add US policy events
+  geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2021, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
+
+  annotate("text", x = 2004, y = max(annual_region_encounters$Total) * 0.85,
+           label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2012, y = max(annual_region_encounters$Total) * 0.85,
+           label = "DACA", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2015, y = max(annual_region_encounters$Total) * 0.85,
+           label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2020, y = max(annual_region_encounters$Total) * 0.85,
+           label = "COVID + Title 42", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2021, y = max(annual_region_encounters$Total) * 0.8,
+           label = "Remain in Mexico Ends", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2023, y = max(annual_region_encounters$Total) * 0.85,
+           label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
+
+labs(
+    title = "CBP Encounters by Region: 2004–2024",
+    subtitle = "Policy milestones overlaid to reflect spikes and dips in migration trends",
+    caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
+    x = "Year",
+    y = "Encounters",
+    fill = "US Entry"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.border = element_rect(color = 'grey', fill = NA, size = 1),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 12),
+    plot.caption = element_text(size = 9)
+  )
+
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+### Annual Citizenship (Origin) Encounters
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+Our next analysis was of the Annual Citizenship dataset which we refer to as Annual Origin.  We could not directly visualize all encounters by all countries of origin so we first summarized and counted all encounters by Origin which we then used to select the top five countries by encounter quantity.  We used this result to directly then filter on a new summary by gathering the top five origins and summarize the result by Origin and Year and found total encounters by Origin and Year.  We find another interesting uptick in encounters around the time when Remain in Mexico ended and of the top five countries of origin, the bottom two which did not spike seem to coincide with the Annual Region Encounters above.  Phillipines and Canada both seem like countries of origin that would not be affected by Remain in Mexico and the data trends as such.  Let's next look at types of encounters by family status.
+
+
+```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
+
+
+#-----------------CBP Encounters by Top Origins: 2004–2025-----------------
+
+
+#Read Microsoft Excel files
+library(readxl)
+#Use ggplot
+library(ggplot2)
+
+#Use dplyr and silence warnings
+library(dplyr, warn.conflicts = FALSE)
+options(dplyr.summarise.inform = FALSE)
+
+
+# Load the data
+file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
+sheet_name <- "Annual Citizenship"
+annual_origin_encounters <- read_excel(file_path, sheet = sheet_name)
+
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+annual_origin_encounters_sanitize <- annual_origin_encounters %>%
+  rename(
+    Year = 'Fiscal\r\nYear',
+    Encounters = 'Quantity',
+    Origin = 'Citizenship'
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
+
+
+# Determine the top countries by total citizenships granted
+annual_origin_encounters_filtered <- annual_origin_encounters_sanitize %>%
+  group_by(Origin) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n=5)
+
+
+# Filter the original data to include only these top countries
+top_annual_origin_encounters <- annual_origin_encounters_sanitize %>%
+  filter(Origin %in% annual_origin_encounters_filtered$Origin) %>%
+  group_by(Origin, Year) %>%
+  summarise(Total = sum(Encounters))
+
+
+#Add a factor to help order the legend to match quantity of encounters heirarchy
+top_annual_origin_encounters <- top_annual_origin_encounters %>%
+  dplyr::filter(Origin %in% c('Haiti', 'Cuba', 'Mexico',  'Philippines', 'Canada'))
+top_annual_origin_encounters$Origin <- factor(top_annual_origin_encounters$Origin, levels=c('Haiti', 'Cuba', 'Mexico',  'Philippines', 'Canada'))
+
+
+#Plot spaghetti plot to contrast encounters by origin
+ggplot(top_annual_origin_encounters, aes(x = Year, y = Total, color = Origin)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  
+  #Add US policy events
+  geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2021, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
+
+  annotate("text", x = 2004, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2012, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "DACA", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2015, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2020, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "COVID + Title 42", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2021, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "Remain in Mexico Ends", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2023, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
+  
+  labs(
+    title = "CBP Encounters by Top Origins: 2004–2025",
+    caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.border = element_rect(color = 'grey', fill = NA, size = 1),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+### Annual Encounters by Family Status
+
+Our analsis turns to Annual Family Status dataset which we summarize by Year and Family status to find total encounters by these categories.  We see again the uptick coinciding with the ending of the Remain in Mexico policy but this time we see also an uptick in the proportion of encounters of Family Unit Individuals.  This uptick does not seem evidently related to ending of Remain in Mexico.
+
+```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
+
+
+#-----------------CBP Encounters by Top Origins: 2004–2025-----------------
+
+
+
+library(readxl)
+library(dplyr)
+library(ggplot2)
+
+#Use dplyr and silence warnings
+library(dplyr, warn.conflicts = FALSE)
+options(dplyr.summarise.inform = FALSE)
+
+
+# Load the data
+file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
+sheet_name <- "Annual Family Status"
+annual_familystatus_encounters <- read_excel(file_path, sheet = sheet_name)
+
+
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+annual_familystatus_encounters_sanitize <- annual_familystatus_encounters %>%
+  rename(
+    Year = 'Fiscal\r\nYear',
+    Encounters = 'Quantity',
+    Family = 'Family Status'
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
+
+
+# Summarize the data to get the sum of quantities for each family status by year
+annual_familystatus_encounters <- annual_familystatus_encounters_sanitize %>%
+  group_by(Year, Family) %>%
+  summarize(Total = sum(Encounters))
+
+
+# Create the bar chart
+ggplot(annual_familystatus_encounters, aes(x = Year, y = Total, fill = Family)) +
+  geom_bar(stat = 'identity') +
+  
+  geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2021, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
+
+  annotate("text", x = 2004, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2012, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "DACA", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2015, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2020, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "COVID + Title 42", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2021, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "Remain in Mexico Ends", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2023, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
+  
+  labs(title = 'CBP Encounters by Family Status: 2004–2024',
+       caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
+       x = 'Year',
+       y = 'Encounters',
+       fill = 'Family Status') +
+  theme_minimal() +
+  theme(
+    panel.border = element_rect(color = 'grey', fill = NA, size = 1),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+
+
+```
