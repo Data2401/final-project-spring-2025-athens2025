@@ -9,76 +9,10 @@ output:
 
 
 
+```{r echo=FALSE, warning=FALSE}
 
 
-```{r echo=FALSE, warning=FALSE, fig.height=4, fig.width=10}
-
-
-#-----------------Yearly Encounters by US Entry: 2014–2025-----------------
-
-
-#Read Microsoft Excel files
-library(readxl)
-#Use ggplot
-library(ggplot2)
-
-#Use dplyr and silence warnings
-library(dplyr, warn.conflicts = FALSE)
-options(dplyr.summarise.inform = FALSE)
-
-
-annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", 
-                                       sheet = "Annual Region")
-
-
-spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
-  rename(
-    Year = 'Fiscal\r\nYear',
-    Region = 'Region', 
-    Encounters = 'Quantity'
-  ) %>%
-  filter(Year >= 2014 & Year <= 2025)
-
-
-#length(unique(annual_region_encounters$Region))
-
-
-top_regions <- spaghetti_annual_region_encounters_pre %>%
-  group_by(Region) %>%
-  summarise(Total = sum(Encounters)) %>%
-  arrange(desc(Total))
-
-
-spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
-  filter(Region %in% top_regions$Region)
-
-
-
-ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, color = Region)) +
-  geom_line(size = 1) +
-  geom_point(size = 2) +
-  labs(
-    title = "Yearly Encounters by US Entry: 2014–2025",
-    caption = "Source: KHSM Encounters (OFO)",
-    x = "Year",
-    y = "Encounters",
-    fill = "US Entry"
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "right",
-    plot.title = element_text(face = "bold", size = 14)
-  )
-
-
-```
-
-
-
-```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
-
-
-#-----------------Border Encounters by Region: 2004–2025-----------------
+#-----------------Border Encounters by US Region: 2004–2025-----------------
 
 
 #Read Microsoft Excel files
@@ -91,40 +25,42 @@ library(dplyr, warn.conflicts = FALSE)
 options(dplyr.summarise.inform = FALSE)
 
 
-annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", 
-                                       sheet = "Annual Region")
+annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
 
 
-# spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
-#   rename(
-#     Year = `Fiscal\r\nYear`,
-#     Region = `Region`, 
-#     Encounters = `Quantity`
-#   ) %>%
-#   filter(Year >= 2014 & Year <= 2025)
-# 
-# 
-# 
-# top_regions <- spaghetti_annual_region_encounters_pre %>%
-#   group_by(Region) %>%
-#   summarise(Total = sum(Encounters)) %>%
-#   arrange(desc(Total))
-# 
-# spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
-#   filter(Region %in% top_regions$Region)
-
-spaghetti_all_regions_full <- annual_region_encounters %>%
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+annual_region_encounters_sanitize <- annual_region_encounters %>%
   rename(
     Year = 'Fiscal\r\nYear',
     Region = 'Region',
     Encounters = 'Quantity'
   ) %>%
-  filter(Year >= 2004 & Year <= 2025)
+  filter(Year >= 2004 & Year <= 2024)
 
-ggplot(spaghetti_all_regions_full, aes(x = Year, y = Encounters, color = Region)) +
+
+#Sum encounters by region
+annual_region_encounters <- annual_region_encounters_sanitize %>%
+  group_by(Region, Year) %>%
+  summarize(Total = sum(Encounters))
+
+
+#Add a factor to help order the legend to match quantity of encounters heirarchy
+annual_region_encounters <- annual_region_encounters %>%
+  dplyr::filter(Region %in% c('Southwest Land Border', 'Air Ports of Entry/Interior', 'Northern Land Border',  'Coastal Border'))
+annual_region_encounters$Region <- factor(annual_region_encounters$Region, levels=c('Southwest Land Border', 'Air Ports of Entry/Interior', 'Northern Land Border', 'Coastal Border'))
+
+
+#Option to not use scientific notation
+options(scipen=999)
+
+
+#Plot spaghetti plot to contrast regional encounters
+ggplot(annual_region_encounters, aes(x = Year, y = Total, color = Region)) +
   geom_line(linewidth = 1) +
   geom_point(size = 2) +
 
+  #Add US policy events
   geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
   geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
   geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
@@ -132,23 +68,23 @@ ggplot(spaghetti_all_regions_full, aes(x = Year, y = Encounters, color = Region)
   geom_vline(xintercept = 2021, linetype = "dashed", color = "gray30") +
   geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
 
-  annotate("text", x = 2004, y = max(spaghetti_all_regions_full$Encounters) * 0.85, 
+  annotate("text", x = 2004, y = max(annual_region_encounters$Total) * 0.85,
            label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2012, y = max(spaghetti_all_regions_full$Encounters) * 0.85, 
+  annotate("text", x = 2012, y = max(annual_region_encounters$Total) * 0.85,
            label = "DACA", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2015, y = max(spaghetti_all_regions_full$Encounters) * 0.85, 
+  annotate("text", x = 2015, y = max(annual_region_encounters$Total) * 0.85,
            label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2020, y = max(spaghetti_all_regions_full$Encounters) * 0.85, 
+  annotate("text", x = 2020, y = max(annual_region_encounters$Total) * 0.85,
            label = "COVID + Title 42", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2021, y = max(spaghetti_all_regions_full$Encounters) * 0.85, 
+  annotate("text", x = 2021, y = max(annual_region_encounters$Total) * 0.8,
            label = "Remain in Mexico Ends", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2023, y = max(spaghetti_all_regions_full$Encounters) * 0.85, 
+  annotate("text", x = 2023, y = max(annual_region_encounters$Total) * 0.85,
            label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
 
 labs(
-    title = "Border Encounters by Region: 2004–2025",
+    title = "Border Encounters by Region: 2004–2024",
     subtitle = "Policy milestones overlaid to reflect spikes and dips in migration trends",
-    caption = "Source: KHSM Encounters (OFO)",
+    caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
     x = "Year",
     y = "Encounters",
     fill = "US Entry"
@@ -171,7 +107,7 @@ labs(
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
 
-#-----------------Yearly Encounters by Origin - Spaghetti Plot-----------------
+#-----------------Top Encounters by Origin: 2004–2025-----------------
 
 
 #Read Microsoft Excel files
@@ -187,30 +123,69 @@ options(dplyr.summarise.inform = FALSE)
 # Load the data
 file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
 sheet_name <- "Annual Citizenship"
-df <- read_excel(file_path, sheet = sheet_name)
+annual_origin_encounters <- read_excel(file_path, sheet = sheet_name)
 
-
-annual_origin_encounters <- df %>%
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+annual_origin_encounters_sanitize <- annual_origin_encounters %>%
   rename(
     Year = 'Fiscal\r\nYear',
     Encounters = 'Quantity',
     Origin = 'Citizenship'
-  )
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
 
 
-top_total_origin_encounters <- annual_origin_encounters %>%
-  group_by(Year) %>%
-  arrange(Year, desc(Encounters)) %>%
-  slice_head(n=5) %>%
-  ungroup()
+# Determine the top countries by total citizenships granted
+annual_origin_encounters_filtered <- annual_origin_encounters_sanitize %>%
+  group_by(Origin) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n=5)
 
 
-ggplot(top_total_origin_encounters, aes(x = Year, y = Encounters, color = Origin)) +
+# Filter the original data to include only these top countries
+top_annual_origin_encounters <- annual_origin_encounters_sanitize %>%
+  filter(Origin %in% annual_origin_encounters_filtered$Origin) %>%
+  group_by(Origin, Year) %>%
+  summarise(Total = sum(Encounters))
+
+
+#Add a factor to help order the legend to match quantity of encounters heirarchy
+top_annual_origin_encounters <- top_annual_origin_encounters %>%
+  dplyr::filter(Origin %in% c('Haiti', 'Cuba', 'Mexico',  'Philippines', 'Canada'))
+top_annual_origin_encounters$Origin <- factor(top_annual_origin_encounters$Origin, levels=c('Haiti', 'Cuba', 'Mexico',  'Philippines', 'Canada'))
+
+
+#Plot spaghetti plot to contrast encounters by origin
+ggplot(top_annual_origin_encounters, aes(x = Year, y = Total, color = Origin)) +
   geom_line(size = 1) +
   geom_point(size = 2) +
+  
+  #Add US policy events
+  geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2021, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
+
+  annotate("text", x = 2004, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2012, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "DACA", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2015, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2020, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "COVID + Title 42", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2021, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "Remain in Mexico Ends", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2023, y = max(top_annual_origin_encounters$Total) * 0.85, 
+           label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
+  
   labs(
-    title = "Top Encounters by Origin: 2004–2014",
-    caption = "Source: KHSM Encounters (OFO)",
+    title = "Top Encounters by Origin: 2004–2025",
+    caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
     x = "Year",
     y = "Encounters"
   ) +
@@ -219,55 +194,6 @@ ggplot(top_total_origin_encounters, aes(x = Year, y = Encounters, color = Origin
     legend.position = "right",
     plot.title = element_text(face = "bold", size = 14)
   )
-
-
-```
-
-
-
-
-
-
-```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
-
-#Read Microsoft Excel files
-library(readxl)
-#Use ggplot
-library(ggplot2)
-
-#Use dplyr and silence warnings
-library(dplyr, warn.conflicts = FALSE)
-options(dplyr.summarise.inform = FALSE)
-
-
-library(ggplot2)
-
-
-annual_origin_encounters <- df %>%
-  rename(
-    Year = 'Fiscal\r\nYear',
-    Encounters = 'Quantity',
-    Origin = 'Citizenship'
-  )
-
-
-top_total_origin_encounters <- annual_origin_encounters %>%
-  group_by(Year) %>%
-  arrange(Year, desc(Encounters)) %>%
-  slice_head(n=5) %>%
-  ungroup()
-
-
- # Create the scatterplot with boxplots
- ggplot(top_total_origin_encounters, aes(x = Year, y = Encounters, color = Origin)) +
-   geom_point(alpha = 0.5) + # Scatterplot#
-   geom_boxplot(aes(group = Year), position = position_dodge(width = 5.8), 
-                width = 0.2) + # Boxplots
-   labs(title = "Enconters by Year",
-      x = "Fiscal Year",
-      y = "Encounters") +
-   theme_minimal()
-
 
 
 ```
@@ -289,58 +215,56 @@ options(dplyr.summarise.inform = FALSE)
 
 # Load the data
 file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
-sheet_name <- "Annual Citizenship"
-df <- read_excel(file_path, sheet = sheet_name)
+sheet_name <- "Annual Family Status"
+annual_familystatus_encounters <- read_excel(file_path, sheet = sheet_name)
 
 
-annual_origin_encounters <- df %>%
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+annual_familystatus_encounters_sanitize <- annual_familystatus_encounters %>%
   rename(
     Year = 'Fiscal\r\nYear',
     Encounters = 'Quantity',
-    Origin = 'Citizenship'
-  )
+    Family = 'Family Status'
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
 
 
-# Clean the data
-annual_origin_encounters <- annual_origin_encounters %>%
-  select(Year, Origin, Encounters) %>%
-  filter(!is.na(Origin) & !is.na(Encounters)) %>%
-  #filter(Year==2015) %>%
-  group_by(Origin, Year) %>%
-  summarise(AvgEncounters = mean(Encounters)) %>%
-  arrange(Year, desc(AvgEncounters)) %>%
-  slice_head(n=5) %>%
-  ungroup()
+# Summarize the data to get the sum of quantities for each family status by year
+annual_familystatus_encounters <- annual_familystatus_encounters_sanitize %>%
+  group_by(Year, Family) %>%
+  summarize(Total = sum(Encounters))
 
 
-annual_origin_encounters %>%
-  ggplot(aes(x=Year, y=AvgEncounters)) + #, color = Origin)) +
-  geom_point() +
+# Create the bar chart
+ggplot(annual_familystatus_encounters, aes(x = Year, y = Total, fill = Family)) +
+  geom_bar(stat = 'identity') +
   
-  
-  # Following 15 LOC are for political events.
   geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
   geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
   geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
   geom_vline(xintercept = 2020, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2021, linetype = "dashed", color = "gray30") +
   geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
 
-  annotate("text", x = 2004, y = 200000, 
-          label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2012, y = 200000, 
-          label = "DACA", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2015, y = 200000, 
-          label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2020, y = 200000, 
-          label = "COVID + Title 42", angle = 90, vjust = -0.4, size = 3) +
-  annotate("text", x = 2023, y = 200000, 
-          label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2004, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2012, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "DACA", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2015, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2020, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "COVID + Title 42", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2021, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "Remain in Mexico Ends", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2023, y = max(annual_familystatus_encounters$Total) * 0.85, 
+           label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
   
-  
-  
-  labs(title = "Encounters by Origin (Total): 2004–2025",
-       x = "Encounters",
-       y = "Year") +
+  labs(title = 'Encounters by Family Status: 2004–2025',
+       caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
+       x = 'Year',
+       y = 'Encounters',
+       fill = 'Family Status') +
   theme_minimal()
 
 
@@ -352,43 +276,58 @@ annual_origin_encounters %>%
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
 
+#-----------------Top 5 Encounters by Origin: 2004–2025-----------------
+
+
+
+#Read Microsoft Excel files
+library(readxl)
+#Use ggplot
+library(ggplot2)
+
 #Use dplyr and silence warnings
 library(dplyr, warn.conflicts = FALSE)
 options(dplyr.summarise.inform = FALSE)
 
 
+# Load the data
+file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
+sheet_name <- "Annual Citizenship"
+df <- read_excel(file_path, sheet = sheet_name)
 
-# origins_of_interest <- c('Mexico', 'Canada', 'Haiti', 'Cuba', 'Philipines', 'Ukraine')
-# 
-# total_origin_encounters <- annual_origin_encounters %>%
-#   #filter(Origin == origins_of_interest) %>%
-#   group_by(Origin, Year) %>%
-#   summarise(AvgEncounters = mean(Encounters)) %>%
-#   ungroup()
+df <- df %>%
+  rename(
+    Year = 'Fiscal\r\nYear',
+    Encounters = 'Quantity',
+    Origin = 'Citizenship'
+  )
+
+# Determine the top countries by total citizenships granted
+top_countries <- df %>%
+  group_by(Origin) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n=5)
+
+# Filter the original data to include only these top countries
+top_origin_encounters <- df %>%
+  filter(Origin %in% top_countries$Origin)
 
 
-#print(total_origin_encounters)
-
-
-# total_by_year_2004 <- total_origin_encounters %>%
-#   group_by(Year) %>%
-#   arrange(Year, desc(Total)) %>%
-#   slice_head(n=5) %>%
-#   ungroup()
-
-
-#print(total_by_year_2004)
-
-# distinct_origins <- total_by_year_2004 %>%
-#   dplyr::distinct(Origin) %>%
-#   arrange(desc(Origin))
-#print(distinct_origins)
-
-#total_by_year <- spread(total_origin_encounters, key=Year, value=Total)
-#print(total_by_year)
+ggplot(top_origin_encounters, aes(x = Origin, y = Encounters)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Top 5 Encounters by Origin: 2004–2025",
+       caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
+       x = "Origin",
+       y = "Encounters")
 
 
 ```
+
+
+
+
 
 
 
