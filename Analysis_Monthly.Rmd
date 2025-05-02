@@ -40,23 +40,26 @@ options(dplyr.summarise.inform = FALSE)
 # Load the data
 file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
 sheet_name <- "Monthly Citizenship"
-df <- read_excel(file_path, sheet = sheet_name)
+monthly_origin_encounters <- read_excel(file_path, sheet = sheet_name)
 
 
-monthly_origin_encounters <- df %>%
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+monthly_origin_encounters_sanitize <- monthly_origin_encounters %>%
   rename(
     Year = 'Fiscal\r\nYear',
     Encounters = 'Quantity',
     Origin = 'Citizenship'
-  )
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
 
 
+#Using a vector to represent the order of my category, we can mutate the categorical field
+#to a factor which with the order property allows us to order the x-labels in the plot.
 month_order <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
 #Abbreviate Month Name
-monthly_origin_encounters <- monthly_origin_encounters %>%
+monthly_origin_encounters <- monthly_origin_encounters_sanitize %>%
   mutate(Month = substr(Month, 4, 6))
-
 #Use factor to order Months for visualization
 monthly_origin_encounters <- monthly_origin_encounters %>%
   mutate(Month = factor(Month, levels = month_order, ordered = TRUE))
@@ -65,16 +68,14 @@ monthly_origin_encounters <- monthly_origin_encounters %>%
 # Group by Month and Citizenship, then sum the Quantity
 monthly_avg_origin_encounters <- monthly_origin_encounters %>%
   group_by(Month, Origin) %>%
-  summarise(AvgEncounters = mean(Encounters)) %>%
-  ungroup()
+  summarise(AvgEncounters = mean(Encounters))
 
 
 # Find the top five Citizenship by Quantity per Month
 top_monthly_avg_origin_encounters <- monthly_avg_origin_encounters %>%
   group_by(Month) %>%
   arrange(Month, desc(AvgEncounters)) %>%
-  slice_head(n=5) %>%
-  ungroup()
+  slice_head(n=5)
 
 
 library(ggplot2)
@@ -82,15 +83,13 @@ ggplot(top_monthly_avg_origin_encounters, aes(x = Month, y = AvgEncounters, colo
   geom_line() +
   geom_point() +
   labs(title = "Avg Monthly Encounters by Origin: 2004–2025",
-       caption = "Source: KHSM Encounters (OFO)",
+       caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
        x = "Month",
        y = "Average Encounters",
        color = "Origin",
        fill = "Top Origins"
   ) +
   theme_minimal()
-
-
 
 
 ```
@@ -118,29 +117,31 @@ options(dplyr.summarise.inform = FALSE)
 # Load the data
 file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
 sheet_name <- "Monthly Count"
-df <- read_excel(file_path, sheet = sheet_name)
+monthly_encounters <- read_excel(file_path, sheet = sheet_name)
 
 
-#Sanitize field names
-monthly_encounters <- df %>%
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+monthly_encounters_sanitize <- monthly_encounters %>%
   rename(
     Year = 'Fiscal\r\nYear',
     Encounters = 'Quantity'
-  )
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
+      
 
 #Summarize for Monthly Averages
-monthly_encounters <- monthly_encounters %>%
+monthly_encounters <- monthly_encounters_sanitize %>%
   group_by(Month) %>%
   summarize(Month_Mean = mean(Encounters))
 
 
+#Using a vector to represent the order of my category, we can mutate the categorical field
+#to a factor which with the order property allows us to order the x-labels in the plot.
 month_order <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
 #Abbreviate Month Name
 monthly_encounters <- monthly_encounters %>%
   mutate(Month = substr(Month, 4, 6))
-
-
 #Use factor to order Months for visualization
 monthly_encounters <- monthly_encounters %>%
   mutate(Month = factor(Month, levels = month_order, ordered = TRUE))
@@ -149,16 +150,13 @@ monthly_encounters <- monthly_encounters %>%
 monthly_encounters %>%
   ggplot(aes(x = Month, y = Month_Mean, fill = Month_Mean)) +
   geom_bar(stat = "identity") +
-
-  
   labs(
     title = "Avg Monthly Encounters (Total): 2004–2025",
-    caption = "Source: KHSM Encounters (OFO)",
+    caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
     x = "Month",
     y = "Monthly Average",
     fill = "Encounters"
-    
-  ) +
+    ) +
   theme_minimal()
 
 
@@ -184,41 +182,43 @@ options(dplyr.summarise.inform = FALSE)
 # Load the data
 file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
 sheet_name <- "Monthly Count"
-df <- read_excel(file_path, sheet = sheet_name)
+monthly_encounters <- read_excel(file_path, sheet = sheet_name)
 
 
-#Sanitize field names
-monthly_encounters <- df %>%
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+monthly_encounters_sanitize <- monthly_encounters %>%
   rename(
     Year = 'Fiscal\r\nYear',
     Encounters = 'Quantity'
-  )
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
+
 
 #Summarize for Monthly Averages
-monthly_encounters <- monthly_encounters %>%
+monthly_encounters <- monthly_encounters_sanitize %>%
   group_by(Month) %>%
-  summarize(Month_Mean = sum(Encounters))
+  summarize(Total = sum(Encounters))
 
 
+#Using a vector to represent the order of my category, we can mutate the categorical field
+#to a factor which with the order property allows us to order the x-labels in the plot.
 month_order <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
-
 #Abbreviate Month Name
 monthly_encounters <- monthly_encounters %>%
   mutate(Month = substr(Month, 4, 6))
-
 #Use factor to order Months for visualization
 monthly_encounters <- monthly_encounters %>%
   mutate(Month = factor(Month, levels = month_order, ordered = TRUE))
 
 
-# Time lapse :D
-ggplot(monthly_encounters, aes(x = Month, y = Month_Mean, group = 1)) +
+# Time lapse
+ggplot(monthly_encounters, aes(x = Month, y = Total, group = 1)) +
   geom_line(color = "orange", size = 1) +
   geom_point(size = 2) +
   labs(
-    title = "Monthly Total Encounters: 2004–2025",
-    caption = "Source: KHSM Encounters (OFO)",
+    title = "Monthly Total Encounters: 2004–20254",
+    caption = "Source: KHSM Encounters (OFO)Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
     x = "Month",
     y = "Average Encounters"
   ) +
@@ -234,130 +234,14 @@ ggplot(monthly_encounters, aes(x = Month, y = Month_Mean, group = 1)) +
 
 
 
-```{r echo=FALSE, warning=FALSE}
-
-# library(ggplot2)
-# 
-# 
-# 
-# ggplot(top_origin_encounters, aes(x = Year, y = TotalOrigin, color = Origin)) +
-#   geom_line(size = 1) +
-#   geom_point(size = 2) +
-#   labs(
-#     title = "Spaghetti Plot: Border Encounters by Region (2014–2025)",
-#     x = "Year",
-#     y = "Encounters"
-#   ) +
-#   theme_minimal() +
-#   theme(
-#     legend.position = "right",
-#     plot.title = element_text(face = "bold", size = 14)
-#   )
-# 
-# 
-#  # Create the scatterplot with boxplots
-#  ggplot(top_origin_encounters, aes(x = Year, y = TotalOrigin, color = Origin)) +
-#    geom_point(alpha = 0.5) + # Scatterplot#
-#    geom_boxplot(aes(group = Year), position = position_dodge(width = 5.8), 
-#                 width = 0.2) + # Boxplots
-#    labs(title = "Scatterplot with Boxplots of Immigrants by Fiscal Year",
-#       x = "Fiscal Year",
-#       y = "Encounters") +
-#    theme_minimal()
-# 
-
-
-```
 
 
 
 
 
-```{r echo=FALSE, warning=FALSE}
-
-# 
-# 
-# #-----------------Scratch analysis-----------------
-# 
-# #Read Microsoft Excel files
-# library(readxl)
-# #Use ggplot
-# library(ggplot2)
-# 
-# #Use dplyr and silence warnings
-# library(dplyr, warn.conflicts = FALSE)
-# options(dplyr.summarise.inform = FALSE)
-# 
-# 
-# # Load the data
-# file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
-# sheet_name <- "Monthly Citizenship"
-# df <- read_excel(file_path, sheet = sheet_name)
-# 
-# 
-# 
-# unique(annual_region_encounters$Region)
-# 
-# 
-# monthly_origin_encounters <- df %>%
-#   rename(
-#     Year = 'Fiscal\r\nYear',
-#     Encounters = 'Quantity',
-#     Origin = 'Citizenship'
-#   )
-# 
-# distinct_origins <- monthly_origin_encounters %>%
-#   distinct(Origin)
-# 
-# origins_of_interest <- c('Mexico', 'El Salvador', 'Afghanistan')
-# 
-# # Clean the data
-# top_origin_encounters <- monthly_origin_encounters %>%
-#   select(Year, Month, Origin, Encounters) %>%
-#   filter(!is.na(Origin) & !is.na(Encounters)) %>%
-#   filter(Origin == origins_of_interest) %>%
-#   #mutate(Year = as.integer(Year), Encounters = as.numeric(Encounters)) %>%
-#   group_by(Origin, Year, Month) %>%
-#   summarise(Total = sum(Encounters)) %>%
-#   ungroup %>%
-#   group_by(Origin, Year) %>%
-#   summarise(TotalOrigin = sum(Total)) %>%
-#   ungroup()
-# 
-# 
 
 
 
-
-
-```
-
-
-
-
-```{r}
-
-
-
-# encounters <- 'KHSM Encounters (OFO) fy25m11.xlsx'
-# family_encounters <- read_excel(encounters, sheet = 'Annual Family Status')
-# 
-
-
-
-# monthly_encounters %>%
-#   ggplot(aes(x = Month, y = Month_Mean, fill = Month_Mean)) +
-#   geom_bar(stat = "identity") +
-
-
-
-# geom_text(aes(label = round(Month_Mean, 1)), vjust = -0.5, size = 3)
-# 
-# geom_smooth(method = "lm", se = FALSE, color = "purple", linetype = "dashed")
-
-
-
-```
 
 
 
