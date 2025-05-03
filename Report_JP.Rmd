@@ -39,7 +39,7 @@ CBP Encounters data provided by Office of Homeland Security Statistics' begins i
 Our analysis starts with CBP Encounters by Annual Region.  We overlay six U.S Immigration policy events corresponding to the year enacted.  We see a steep increase in CBP Encounters in 2021 particularly at *Southwest Land Border* and *Air Ports of Entry/Interior* which seemed like an interesting data trend as it coincided directly to the ending of the U.S. Immigration policy of *Migrant Protection Protocol* also known as **Remain in Mexico**.  Let's explore more.
 
 
-```{r echo=FALSE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
 
 #-----------------CBP Encounters by US Region: 2004–2024-----------------
@@ -138,7 +138,7 @@ Our next analysis was of the Annual Citizenship dataset which we refer to as Ann
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
 
-#-----------------CBP Encounters by Top Origins: 2004–2025-----------------
+#-----------------CBP Encounters by Top Origins: 2004–2024-----------------
 
 
 #Read Microsoft Excel files
@@ -215,7 +215,7 @@ ggplot(top_annual_origin_encounters, aes(x = Year, y = Total, color = Origin)) +
            label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
   
   labs(
-    title = "CBP Encounters by Top Origins: 2004–2025",
+    title = "CBP Encounters by Top Origins: 2004–2024",
     caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
     x = "Year",
     y = "Encounters"
@@ -238,7 +238,7 @@ Our analysis turns to Annual Family Status dataset which we summarize by Year an
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
 
-#-----------------CBP Encounters by Top Origins: 2004–2025-----------------
+#-----------------CBP Encounters by Top Origins: 2004–2024-----------------
 
 
 
@@ -309,6 +309,219 @@ ggplot(annual_familystatus_encounters, aes(x = Year, y = Total, fill = Family)) 
     legend.position = "right",
     plot.title = element_text(face = "bold", size = 14)
   )
+
+
+```
+
+
+Diving into the Family Status but instead by Region this time shows that _Family Unit Individuals_ CBP Encounters spike only at entry points of _Air Ports of Entry/Interior_ & _Southwest Land Border_ which seems to support the idea that ending Remain in Mexico seems to have spiked encounters in Regions that would be most impacted by the policy from a geographic standpoint.  We order the facet wrapped plots by highest spike in _Family Unit Individuals_ CBP Encountres to best visualize our findings.
+
+
+```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
+
+
+#-----------------Regional (facet) - CBP Encounters by Family Status: 2004–2024----------
+
+
+#Read Microsoft Excel files
+library(readxl)
+#Use ggplot
+library(ggplot2)
+
+#Use dplyr and silence warnings
+library(dplyr, warn.conflicts = FALSE)
+options(dplyr.summarise.inform = FALSE)
+
+
+# Load the data
+file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
+sheet_name <- "Annual Rgn EnfAdm Fam Status"
+annual_region_famstat_encounters <- read_excel(file_path, sheet = sheet_name)
+
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+annual_region_famstat_encounters_sanitize <- annual_region_famstat_encounters %>%
+  rename(
+    Year = 'Fiscal\r\nYear',
+    Encounters = 'Quantity',
+    Family = 'Family Status'
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
+
+
+#Filter the original data to for analysis by Northern Land Border
+annual_region_famstat_encounters_northern <- annual_region_famstat_encounters_sanitize %>%
+  filter(Region == c('Northern Land Border'))
+#Find Total this Region and then add Region back to dataset
+annual_region_famstat_encounters_northern <- annual_region_famstat_encounters_northern %>%
+  group_by(Family, Year) %>%
+  summarise(Total = sum(Encounters)) %>%
+  mutate(Region = 'Northern Land Border')
+
+
+#Filter the original data to for analysis by Air Ports of Entry/Interior
+annual_region_famstat_encounters_airport <- annual_region_famstat_encounters_sanitize %>%
+  filter(Region == c('Air Ports of Entry/Interior'))
+#Find Total this Region and then add Region back to dataset
+annual_region_famstat_encounters_airport <- annual_region_famstat_encounters_airport %>%
+  group_by(Family, Year) %>%
+  summarise(Total = sum(Encounters)) %>%
+  mutate(Region = 'Air Ports of Entry/Interior')
+
+
+#Filter the original data to for analysis by Southwest Land Border
+annual_region_famstat_encounters_southwest <- annual_region_famstat_encounters_sanitize %>%
+  filter(Region == c('Southwest Land Border'))
+#Find Total this Region and then add Region back to dataset
+annual_region_famstat_encounters_southwest <- annual_region_famstat_encounters_southwest %>%
+  group_by(Family, Year) %>%
+  summarise(Total = sum(Encounters)) %>%
+  mutate(Region = 'Southwest Land Border')
+
+
+#Filter the original data to for analysis by Coastal Border
+annual_region_famstat_encounters_coastal <- annual_region_famstat_encounters_sanitize %>%
+  filter(Region == c('Coastal Border'))
+#Find Total this Region and then add Region back to dataset
+annual_region_famstat_encounters_coastal <- annual_region_famstat_encounters_coastal %>%
+  group_by(Family, Year) %>%
+  summarise(Total = sum(Encounters)) %>%
+  mutate(Region = 'Coastal Border')
+
+
+
+#Union all Regional analysis to be used in Facet Wrap
+annual_region_famstat_encounters_all <- bind_rows(annual_region_famstat_encounters_northern, annual_region_famstat_encounters_airport, annual_region_famstat_encounters_southwest, annual_region_famstat_encounters_coastal)
+
+
+#Add a factor to help order the facet wrap
+annual_region_famstat_encounters_all <- annual_region_famstat_encounters_all %>%
+  dplyr::filter(Region %in% c('Southwest Land Border', 'Air Ports of Entry/Interior', 'Northern Land Border',  'Coastal Border'))
+annual_region_famstat_encounters_all$Region <- factor(annual_region_famstat_encounters_all$Region, levels=c('Southwest Land Border', 'Air Ports of Entry/Interior', 'Northern Land Border', 'Coastal Border'))
+
+
+#Add a factor to help order legend
+annual_region_famstat_encounters_all <- annual_region_famstat_encounters_all %>%
+  dplyr::filter(Family %in% c('Single Adults', 'Family Unit Individuals', 'Unaccompanied Children',  'Accompanied Minors'))
+annual_region_famstat_encounters_all$Family <- factor(annual_region_famstat_encounters_all$Family, levels=c('Single Adults', 'Family Unit Individuals', 'Unaccompanied Children', 'Accompanied Minors'))
+
+
+
+#Plot spaghetti plot to contrast encounters by origin
+ggplot(annual_region_famstat_encounters_all, aes(x = Year, y = Total, color = Family)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  facet_wrap(~ Region) +
+  
+  #Add US policy events
+  geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2021, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
+
+  annotate("text", x = 2004, y = max(annual_region_famstat_encounters_all$Total) * 0.65, 
+           label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2012, y = max(annual_region_famstat_encounters_all$Total) * 0.65, 
+           label = "DACA", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2015, y = max(annual_region_famstat_encounters_all$Total) * 0.65, 
+           label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2020, y = max(annual_region_famstat_encounters_all$Total) * 0.65, 
+           label = "COVID+Title 42", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2021, y = max(annual_region_famstat_encounters_all$Total) * 0.65, 
+           label = "Rem In Mex Ends", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2023, y = max(annual_region_famstat_encounters_all$Total) * 0.65, 
+           label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
+
+
+  labs(
+    title = "Regional - CBP Encounters by Family Status: 2004–2024",
+    caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.border = element_rect(color = 'grey', fill = NA, size = 1),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+
+
+```
+
+
+
+We also looked at Monthly CBP Encounter data but did not seem to find evidence that either supports or rejects the idea that ending Remain in Mexico played a seemingly large factor in increased in CBP Encounters.
+
+
+```{r echo=FALSE, warning=FALSE, fig.height=4, fig.width=8}
+
+
+#-----------------Avg Monthly Encounters (Total): 2004–2025-----------------
+
+#Read Microsoft Excel files
+library(readxl)
+#Use ggplot
+library(ggplot2)
+
+#Use dplyr and silence warnings
+library(dplyr, warn.conflicts = FALSE)
+options(dplyr.summarise.inform = FALSE)
+
+
+
+# Load the data
+file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
+sheet_name <- "Monthly Count"
+monthly_encounters <- read_excel(file_path, sheet = sheet_name)
+
+
+#Sanitize column headers and rename to more intelligible naming
+#Filter to appropriate time frame
+monthly_encounters_sanitize <- monthly_encounters %>%
+  rename(
+    Year = 'Fiscal\r\nYear',
+    Encounters = 'Quantity'
+  ) %>%
+  filter(Year >= 2004 & Year <= 2024)
+      
+
+#Summarize for Monthly Averages
+monthly_encounters <- monthly_encounters_sanitize %>%
+  group_by(Month) %>%
+  summarize(Month_Mean = mean(Encounters))
+
+
+#Using a vector to represent the order of my category, we can mutate the categorical field
+#to a factor which with the order property allows us to order the x-labels in the plot.
+month_order <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+#Abbreviate Month Name
+monthly_encounters <- monthly_encounters %>%
+  mutate(Month = substr(Month, 4, 6))
+#Use factor to order Months for visualization
+monthly_encounters <- monthly_encounters %>%
+  mutate(Month = factor(Month, levels = month_order, ordered = TRUE))
+
+
+monthly_encounters %>%
+  ggplot(aes(x = Month, y = Month_Mean, fill = Month_Mean)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Avg Monthly Encounters: 2004–2024",
+    caption = "Source: Office of Homeland Security Statistics - Customs & Border Patrol Encounters",
+    x = "Month",
+    y = "Monthly Average",
+    fill = "Encounters"
+    ) +
+  theme_minimal() +
+  theme(
+    panel.border = element_rect(color = 'grey', fill = NA, size = 1),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+
 
 
 ```
