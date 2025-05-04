@@ -9,13 +9,22 @@ output: html_document
 
 knitr::opts_chunk$set(echo = FALSE)
 
+#Read Microsoft Excel files
+library(readxl)
+#Use ggplot for visualizations
+library(ggplot2)
+
+#Use dplyr for data tidy operations and silence warnings
+library(dplyr, warn.conflicts = FALSE)
+options(dplyr.summarise.inform = FALSE)
+
 ```
 
 ## Introduction
 
-Our project centers around the defining feature of American life by exploring immigration trends in the United States using data collected by U.S. Customs and Border Protection’s (CBP) Office of Field Operations from 2004 to 2024 provided by the U.S. Office of Homeland Security Statistics.  How does U.S. Immigration policy impact CPB Encounters?
+Our analysis centers around the defining feature of American life by exploring immigration trends in the United States using data collected by U.S. Customs and Border Protection’s (CBP) Office of Field Operations from 2004 to 2024 provided by the U.S. Office of Homeland Security Statistics.  How does U.S. Immigration policy impact CPB Encounters?
 
-Our approach overlays important U.S. Immigration policy events onto an exploratory analysis of CBP Encounter data from 2004 to 2024 to look for trends or inflection points in the data compared to U.S. policy enactments.  The data collected by CBP is provided in annual and monthly formats which we explore. Our analysis uses RStudio for data cleaning, data analysis and visualization on the source data directly without manual operations so the analysis is fully reproducible.
+Our approach overlays important U.S. Immigration policy events onto an exploratory analysis of CBP Encounter data from 2004 to 2024 to look for trends or inflection points in the data compared to U.S. policy enactments.  The data collected by CBP is provided in annual and monthly formats which we explore. Our analysis uses RStudio for data cleaning, data analysis and visualization on the source data directly without manual operations so the analysis is fully reproducible.  Comparing changes in CBP Encounters relative to U.S. Immigration policy may help inform on the merit or effectiveness of future immigration policy.
 
 ## Data Preparation & Display
 
@@ -27,11 +36,16 @@ The CBP Encounters Key Homeland Security Metric (KHSM) includes any encounter of
 
 Source: [CBP Encounters - Key Homeland Security Metric](https://ohss.dhs.gov/sites/default/files/2025-01/KHSM%20Encounters%20%28OFO%29%20fy25m11.xlsx)
 
-CBP Encounters data provided by Office of Homeland Security Statistics' begins in 2004 and data collection is on going.  Given the project scope and data continuing to be collected, our first step in preparing the data was to filter the data for analysis to only years for which are fully covered in our dataset so 2025 was excluded from our analysis.  Our analysis starts with three initial steps outlined below:
+CBP Encounters data provided by Office of Homeland Security Statistics' begins in 2004 and data collection is on going.  Given the project scope and data continuing to be collected, our first step in preparing the data is to filter the data for analysis to only years for which are fully covered in our dataset so 2025 is excluded from our analysis.  We load the data directly in the source Microsoft Excel format using the *readxl* library for R.  Our analysis starts with three initial steps outlined below:
 
 1. Filter data to years between and including 2004 and 2024
-2. Sanitize column headers and rename columns to more sensible nomenclature
-3. Summarize and visualize data for exploration
+2. Sanitize and rename column headers to a more sensible nomenclature
+3. Summarize and/or segregate data in order to visualize for exploration
+
+We focus our exploration on the following tabular datasets bundled in the data source:  **Annual Region**, **Annual Citizenship**, **Annual Family Status**, **Annual Rgn EnfAdm Fam Status**
+
+From the above mentioned tables we look at *Fiscal Year*, which we name to **Year**.  We look at *Quantity* which we rename to **Encounters**.  We rename *Citizenship* to **Origin** and *Family Status* to **Family**.  We also use **Region** without renaming.
+
 
 ## Exploratory Data Analysis
 
@@ -43,16 +57,6 @@ Our analysis starts with CBP Encounters by Annual Region.  We overlay six U.S Im
 
 
 #-----------------CBP Encounters by US Region: 2004–2024-----------------
-
-
-#Read Microsoft Excel files
-library(readxl)
-#Use ggplot
-library(ggplot2)
-
-#Use dplyr and silence warnings
-library(dplyr, warn.conflicts = FALSE)
-options(dplyr.summarise.inform = FALSE)
 
 
 annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
@@ -141,16 +145,6 @@ Our next analysis was of the Annual Citizenship dataset which we refer to as Ann
 #-----------------CBP Encounters by Top Origins: 2004–2024-----------------
 
 
-#Read Microsoft Excel files
-library(readxl)
-#Use ggplot
-library(ggplot2)
-
-#Use dplyr and silence warnings
-library(dplyr, warn.conflicts = FALSE)
-options(dplyr.summarise.inform = FALSE)
-
-
 # Load the data
 file_path <- "KHSM Encounters (OFO) fy25m11.xlsx"
 sheet_name <- "Annual Citizenship"
@@ -182,7 +176,7 @@ top_annual_origin_encounters <- annual_origin_encounters_sanitize %>%
   summarise(Total = sum(Encounters))
 
 
-#Add a factor to help order the legend to match quantity of encounters heirarchy
+#Add a factor to help order the legend to match quantity of encounters
 top_annual_origin_encounters <- top_annual_origin_encounters %>%
   dplyr::filter(Origin %in% c('Haiti', 'Cuba', 'Mexico',  'Philippines', 'Canada'))
 top_annual_origin_encounters$Origin <- factor(top_annual_origin_encounters$Origin, levels=c('Haiti', 'Cuba', 'Mexico',  'Philippines', 'Canada'))
@@ -239,16 +233,6 @@ Our analysis turns to Annual Family Status dataset which we summarize by Year an
 
 
 #-----------------CBP Encounters by Top Origins: 2004–2024-----------------
-
-
-
-library(readxl)
-library(dplyr)
-library(ggplot2)
-
-#Use dplyr and silence warnings
-library(dplyr, warn.conflicts = FALSE)
-options(dplyr.summarise.inform = FALSE)
 
 
 # Load the data
@@ -314,23 +298,13 @@ ggplot(annual_familystatus_encounters, aes(x = Year, y = Total, fill = Family)) 
 ```
 
 
-Diving into the Family Status but instead by Region this time shows that _Family Unit Individuals_ CBP Encounters spike only at entry points of _Air Ports of Entry/Interior_ & _Southwest Land Border_ which seems to support the idea that ending Remain in Mexico seems to have spiked encounters in Regions that would be most impacted by the policy from a geographic standpoint.  We order the facet wrapped plots by highest spike in _Family Unit Individuals_ CBP Encountres to best visualize our findings.
+Diving into the Family Status but instead by Region this time shows that *Family Unit Individuals* CBP Encounters spike only at entry points of *Air Ports of Entry/Interior* & *Southwest Land Border* which seems to support the idea that ending Remain in Mexico seems to have spiked encounters in Regions that would be most impacted by the policy from a geographic standpoint.  We order the facet wrapped plots by highest spike in *Family Unit Individuals* CBP Encounters to best visualize our findings.
 
 
 ```{r echo=FALSE, warning=FALSE, fig.width=8, fig.height=4.5}
 
 
 #-----------------Regional (facet) - CBP Encounters by Family Status: 2004–2024----------
-
-
-#Read Microsoft Excel files
-library(readxl)
-#Use ggplot
-library(ggplot2)
-
-#Use dplyr and silence warnings
-library(dplyr, warn.conflicts = FALSE)
-options(dplyr.summarise.inform = FALSE)
 
 
 # Load the data
@@ -453,23 +427,13 @@ ggplot(annual_region_famstat_encounters_all, aes(x = Year, y = Total, color = Fa
 
 
 
-We also looked at Monthly CBP Encounter data but did not seem to find evidence that either supports or rejects the idea that ending Remain in Mexico played a seemingly large factor in increased in CBP Encounters.
+We also looked at Monthly CBP Encounter data but did not seem to find evidence that either supports or rejects the idea that ending Remain in Mexico contributed to an in increase in CBP Encounters.
 
 
 ```{r echo=FALSE, warning=FALSE, fig.height=4, fig.width=8}
 
 
 #-----------------Avg Monthly Encounters (Total): 2004–2025-----------------
-
-#Read Microsoft Excel files
-library(readxl)
-#Use ggplot
-library(ggplot2)
-
-#Use dplyr and silence warnings
-library(dplyr, warn.conflicts = FALSE)
-options(dplyr.summarise.inform = FALSE)
-
 
 
 # Load the data
@@ -529,7 +493,7 @@ monthly_encounters %>%
 
 ## Summary
 
-Our analysis seeks to find data trends in U.S. Customs and Border Protection’s Encounters Key Homeland Security Metric (KHSM) to inform how U.S. Immigration policy impacts this defining feature of American life.  Using annual regional encounter data, annual country of origin encounter data and annaul family status encounter data, we identify a large increase in CBP encounters at ports of entry that are most affected by Remain in Mexico policy ending and we identify that top countries of origin based on encouter quantities that would most likely be encountered at these ports of entry impacted by Remain in Mexico increase as well.  Our conclusion is that the ending of the Remain in Mexico policy caused a significant increase in immigration according to the encounters at specific ports of entry.
+Our analysis seeks to find data trends in U.S. Customs and Border Protection’s Encounters Key Homeland Security Metric (KHSM) to inform how U.S. Immigration policy impacts this defining feature of American life.  Using annual regional encounter data, annual country of origin encounter data and annaul family status encounter data, we identify a large increase in CBP encounters at ports of entry that seem most impacted by Remain in Mexico policy ending and we identify that top countries of origin based on encouter quantities that would most likely be encountered at these ports of entry impacted by Remain in Mexico increase as well.  Our conclusion is that the ending of the Remain in Mexico policy caused a significant increase in immigration according to the encounters at specific ports of entry.  Another pivotal event not related to U.S. Immigration policy and which occurs just before the spike in immigration we identify is the Covid-19 pandemic.  How the Covid-19 pandemic impacted the local economies of the country of origin's contributing most to U.S. Immigration encounters remains unknown to our analysis but is likely a factor and could be a factor in increased encounters of *family units*.
 
 
 
