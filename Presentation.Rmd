@@ -1,69 +1,356 @@
 ---
-title: "Presentation"
-author: "Team"
-date: "`r Sys.Date()`"
-output: powerpoint_presentation
+title: "Shifting Borders: Analyzing U.S. Immigration Trends Through the Years"
+output: html_document
 ---
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+```
+
+## **Introduction**
+
+When you think about what makes America, **AMERICA**, certain thoughts come to mind. Most importantly our diverse population. Well, we didn’t all get here by magic. One person or a group of people, a family perhaps, migrated here for a multitude of reasons i.e. fleeing violence, poverty, and ultimately seeking opportunity. We are a nation of immigrants, and have been since our conception. 
+
+Our project centers around this defining feature of American life by exploring immigration trends in the United States, using data collected by U.S. Customs and Border Protection's Office of Field Operations (OFO). Our focus begins in 2004, a pivotal year in the modern immigration landscape.
+
+---
+
+## **Why does our data start in 2004?** 
+
+To grasp, the importance of our data we must paint the picture of what was going on in the United States immigration landscape, pre-2004. 
+
+## **PRE–2004 Immigration Landscape**
+
+Long story short, the immigration story of America begins with the first settlers from Europe that were mostly fleeing to escape religious persecution. As decades and centuries past the "New Americans" started to find  way to keep certain people out while allowing others to make America home. Thus forming the infancy of what we know as our Immigration Policy. 
+
+One example being the Chinese Exclusion Act of 1882 was past that excluded Chinese laborers from being able to migrate here for fear of that they would "take our jobs". Sounds familiar, doesn't it?
+
+---
+
+## **PRE–2004 Immigration Landscape, cont'd. **
+While purposely excluding others, the immigration policy of the United States at the time did favor other rational groups, mostly white, Anglo-Saxon, Protestant (W.A.S.P.) Europeans. 
+
+Fast forward to now, maybe the sentiment of wanting to keep people out is just as American as they come. But over time, mostly after the Immigration and Nationality Act of 1965, the U.S. worked to remove it's racist racially motivated quotas. Official borders were created and America seemed more open to Asylum seekers. 
+
+Things began to change on 9/11/2001. 
+
+Immigration policy became synonymous with National Security. 
+
+The Bush Administration created the Department of Homeland Security in 2002. And border control and enforcement became more aggressive, and militant. 
+
+---
 
 
+## **2004–The Turning Point.**
+The reason our graph starts in 2004 is because it marks the beginning of a new era in U.S. immigration policy — one defined by heightened national security and data collection following the 9/11 attacks.
 
-library(officer)
-library(rmarkdown)
+By 2004, new post-9/11 policies were fully in effect, reshaping how immigration was tracked, processed, and reported. 
 
-pres <- read_pptx()
-
-
-#rmarkdown::render("Presentation.Rmd")
+---
 
 
+## **POST–2004 Immigration Landscape** 
 
-pres <- add_slide(pres, layout = "Title Slide", master = "Office Theme")
-pres <- ph_with(pres, value = "My Presentation Title", location = ph_location_type(type = "title"))
+From 2004 onward, immigration patterns fluctuated in response to political leadership, global conflicts, economic shifts, and humanitarian crises. For instance:
 
-pres <- add_slide(pres, layout = "Title and Content", master = "Office Theme")
-pres <- ph_with(pres, value = "Slide Content", location = ph_location_type(type = "body"))
+-	In 2015, the U.S. saw a surge in unaccompanied minors and family units from Central America.
+-	The COVID-19 pandemic (2020–2021) disrupted migration drastically.
+-	In recent years, increased migration from Venezuela, Haiti, and Nicaragua has reshaped the encounter landscape.
 
-
-# Adding a table
-df <- data.frame(a = 1:10, b = 11:20)
-pres <- add_slide(pres, layout = "Title and Content", master = "Office Theme")
-pres <- ph_with(pres, value = df, location = ph_location_type(type = "body"))
-
-# Adding a plot
-library(ggplot2)
-plot <- ggplot(df, aes(x = a, y = b)) + geom_point()
-pres <- add_slide(pres, layout = "Blank", master = "Office Theme")
-pres <- ph_with(pres, value = plot, location = ph_location_fullsize())
+---
 
 
-print(pres, target = "presentation.pptx")
+## **ABOUT OUR DATASET**
+
+The dataset we’re analyzing is sourced from the KHSM Encounters (OFO) reports and contains encounter-level data tracked by:
+
+-	Fiscal Year
+-	Region
+- Quantity: Number of Encounters
+
+---
+
+## **Research Questions**
+
+How have total border encounters changed over time (2004–present)?
+
+**Questions that came up while we were analyzing.** 
+
+- Why does our data start in 2004? 
+- What happened in 2004?
+- Which nationalities are most commonly encountered and how have they shifted over time?
+- Are there regional patterns in encounter trends — and which field offices process the highest volumes?
+- Can you paint the picture of these boarders and where they are located so that we can have more information on them? 
+
+
+---
+
+## **First things first, let's see the data!**
+
+After speaking with Dr. Shoemaker we decided to use a spagetti graph to display our data because we learned that is the best way to display and analyse our data. A spagetti graph would allow us to  visualize how border encounters have changed over time across multiple regions simultaneously.
+
+
+---
+
+
+## **Load 'her up!...**
+```{r}
+#Import libraries.
+
+#Load ReadXL to be able to read Excel sheets.
+library(readxl) 
+
+#Load dplyr for data manipulation.
+library(dplyr) 
+
+#Load Ggplot to display data visualizations.
+library(ggplot2) 
 
 ```
 
-## R Markdown
+---
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+## ** ...To take a peek!** 
+```{r}
 
-## Slide with Bullets
+#Define path to Excel file and load annual region data.
+annual_region_encounters <- read_excel("KHSM Encounters (OFO) fy25m11.xlsx", sheet = "Annual Region")
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
 
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
+glimpse(annual_region_encounters)
 ```
 
-## Slide with Plot
+---
 
-```{r pressure}
-plot(pressure)
+
+## **Now what are the column names?** 
+```{r}
+
+colnames(annual_region_encounters)
 ```
 
+---
+
+
+## **How many regions are there? What are their names?**
+```{r}
+
+length(unique(annual_region_encounters$Region))
+
+
+#Pipe the dataframe into the distinct function so that it can pull all the unique regions. 
+
+annual_region_encounters %>%
+  distinct(Region)
+
+```
+
+---
+
+## **Now we have an idea of what the dataset contains we want to visualize it.**
+
+Let's get the full view of the data. 
+```{r, fig.width=8, fig.height=4.5}
+# Clean and filter for 2004–2025 so that we can get a full picture of all the data. 
+#Pipe in the data and rename the columns for future readability. 
+spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  ) %>%
+  filter(Year >= 2004 & Year <= 2025)
+
+length(unique(annual_region_encounters$Region))
+
+top_regions <- spaghetti_annual_region_encounters_pre %>%
+  group_by(Region) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) 
+
+spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
+  filter(Region %in% top_regions$Region)
+
+print(spaghetti_annual_region_encounters_filtered_pre)
+```
+
+---
+
+
+```{r, fig.width=8, fig.height=4.5}
+
+
+ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2004–2025)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+---
+
+
+## **Let's break down the borders?** 
+
+- The Air Ports of Entry/ Interior:
+  + Location- Nationwide: International Airports. 
+  + Consists of Travelers arriving via air. 
+  
+- The Coastal Border: 
+  + Location: U.S. coastlines and maritime entry points.
+  + Consists of Travelers arriving from Florida, Puerto Rico, U.S. Virgin Islands, Gulf Coast, and some Atlantic seaports. 
+  
+- The Northern Land Border: 
+  + Location: U.S.–Canada land crossings. 
+  + Consists of Travelers arriving from Border stations--Vehicle, rail, and pedestrian crossings-- in states like Washington, Michigan, New York, Vermont, and Maine.
+  
+- The Southwest Land Border: 
+  + Location: U.S.–Mexico land crossings.
+  + Consists of Travelers arriving from Texas (El Paso, Laredo, Rio Grande), Arizona (Tucson, Yuma), New Mexico, and Southern California (San Diego).
+
+---
+
+
+## **With that in mind, what is  this data is telling us?** 
+
+Let's zoom in on the action for a sec. 
+```{r, fig.width=8, fig.height=4.5}
+spaghetti_annual_region_encounters_pre <- annual_region_encounters %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`, 
+    Encounters = `Quantity`
+  ) %>%
+  filter(Year >= 2014 & Year <= 2025)
+
+length(unique(annual_region_encounters$Region))
+
+
+top_regions <- spaghetti_annual_region_encounters_pre %>%
+  group_by(Region) %>%
+  summarise(Total = sum(Encounters)) %>%
+  arrange(desc(Total)) %>%
+  slice_head(n = 5)
+
+spaghetti_annual_region_encounters_filtered_pre <- spaghetti_annual_region_encounters_pre %>%
+  filter(Region %in% top_regions$Region)
+
+print(spaghetti_annual_region_encounters_filtered_pre)
+```
+---
+  
+  
+```{r, fig.width=8, fig.height=4.5}
+
+ggplot(spaghetti_annual_region_encounters_pre, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2014–2025)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+---
+
+## **Let's look at the spikes...**
+
+
+The next question to answer is: what is driving these stark fluctuations? 
+
+The graphs reflects the policy changes that have taken place administration to administration. 
+
+The most important changes that took place in the context of immigration policy were: 
+
+-	2002: Creation of DHS
+-	2004: Post-9/11 enforcement begins
+-	2012: DACA introduced
+-	2017: Trump’s executive orders
+-	2020: Title 42 and COVID-19 emergency rules
+-	2023: Changes under Biden (e.g., expanded TPS)
+
+
+To visualize the influence of these milestones, we overlaid vertical reference lines on our spaghetti plot using geom_vline() in ggplot2. These vertical lines highlight key years where policy shifts likely influenced the volume of border encounters — helping us better connect data trends with real-world decisions.
+
+
+---
+
+## **Let's see it put all together.**
+
+```{r, fig.width=8, fig.height=4.5}
+
+spaghetti_all_regions_full <- annual_region_encounters %>%
+  rename(
+    Year = `Fiscal\r\nYear`,
+    Region = `Region`,
+    Encounters = `Quantity`
+  ) %>%
+  filter(Year >= 2004 & Year <= 2025)
+
+ggplot(spaghetti_all_regions_full, aes(x = Year, y = Encounters, color = Region)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+
+  geom_vline(xintercept = 2004, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2012, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2015, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "gray30") +
+  geom_vline(xintercept = 2023, linetype = "dashed", color = "gray30") +
+
+  annotate("text", x = 2004, y = max(spaghetti_all_regions_full$Encounters) * 0.95, 
+           label = "DHS Begins", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2012, y = max(spaghetti_all_regions_full$Encounters) * 0.85, 
+           label = "DACA", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2015, y = max(spaghetti_all_regions_full$Encounters) * 0.75, 
+           label = "Family Surge", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2020, y = max(spaghetti_all_regions_full$Encounters) * 0.65, 
+           label = "COVID + Title 42", angle = 90, vjust = -0.4, size = 3) +
+  annotate("text", x = 2023, y = max(spaghetti_all_regions_full$Encounters) * 0.55, 
+           label = "Title 42 Ends", angle = 90, vjust = -0.4, size = 3) +
+
+  labs(
+    title = "Spaghetti Plot: Border Encounters by Region (2004–2025)",
+    subtitle = "Policy milestones overlaid to reflect spikes and dips in migration trends",
+    caption = "Source: KHSM Encounters (OFO)",
+    x = "Year",
+    y = "Encounters"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 12),
+    plot.caption = element_text(size = 9)
+  )
+
+```
+
+---
+
+## **Summary**
+
+
+Now that we put all these factors together let's sum up the data. 
+
+Our analysis of the the KHSM Encounters (OFO) dataset starting at 2004 to the present highlights the fact that nothing happens in a vacuum and what may seem on the surface as just numbers is anything but. When taking the time to exam something context matters. In this case, the context consists of policies, people, and life changing pandemics. While most of the borders tend to shift and sway with the times, the Coastal border stayed steady and even increased. I'm guessing people while the world seemed to stop, certain things like the drug trade doesn't. 
+
+Ultimately, our data seems to reflect the fact that immigration is a mirror. It shows how we respond to fear, opportunity, and change. 
+
+With that in mind who knows what will happen in the future or what trajectory we will take? 
